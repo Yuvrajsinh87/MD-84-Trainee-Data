@@ -6,9 +6,9 @@
     <title>ઔદ્યોગિક તાલીમ સંસ્થા, અંકલેશ્વર - તાલીમાર્થી નોંધણી ફોર્મ</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; color: #333; font-size: 13px; }
-        .container { max-width: 750px; background: #fff; margin: auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .container { max-width: 750px; background: #fff; margin: auto; padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h2 { text-align: center; color: #1a73e8; margin-bottom: 2px; font-size: 18px; }
-        .sub-header { text-align: center; font-size: 12px; color: #666; margin-bottom: 15px; font-weight: bold; }
+        .sub-header { text-align: center; font-size: 12px; color: #666; margin-bottom: 12px; font-weight: bold; }
         .form-group { margin-bottom: 8px; position: relative; }
         label { display: block; font-weight: bold; margin-bottom: 2px; color: #444; font-size: 12px; }
         input, select, textarea { width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; box-sizing: border-box; text-transform: uppercase; }
@@ -20,11 +20,11 @@
         .aadhaar-group { display: flex; gap: 6px; }
         .aadhaar-group input { text-align: center; font-weight: bold; letter-spacing: 2px; }
 
-        /* પ્રિન્ટ / પીડીએફ વખતે બોક્સ છુપાઈ જશે અને સળંગ લખાણ દેખાશે */
+        /* પ્રિન્ટ / પીડીએફ વખતે સળંગ ટેક્સ્ટ દેખાશે */
         .print-aadhaar-text { display: none; }
 
         .hidden { display: none !important; }
-        .btn-container { text-align: center; margin-top: 15px; }
+        .btn-container { text-align: center; margin-top: 12px; }
         button { background-color: #1a73e8; color: white; border: none; padding: 10px 20px; font-size: 14px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
         button:hover { background-color: #1557b0; }
 
@@ -63,7 +63,6 @@
                 margin-bottom: 6px !important;
             }
 
-            /* પ્રિન્ટ વખતે આધાર કાર્ડના અલગ બોક્સ છુપાઈને સળંગ ટેક્સ્ટ દેખાશે */
             .aadhaar-group {
                 display: none !important;
             }
@@ -187,7 +186,7 @@
 </div>
 
 <script>
-    // તમામ ૪૧ તાલીમાર્થીઓનો સંપૂર્ણ અને વેરિફાઈડ ડેટા (આધાર નંબર સાથે)
+    // તમામ તાલીમાર્થીઓનો સંપૂર્ણ અને વેરિફાઈડ ડેટા
     const traineesData = {
         "1": {"name": "MANISHBHAI DHARMESHBHAI VASAVA", "enroll": "403840018", "mobile": "7859895395", "bank_acc": "2210100049097", "ifsc": "BARB0ANKLES", "aadhaar": "937643712345", "address": "PADMAVATI SOCIETY, PRATHAMIK SHALA, ANKLESHWAR - 393001"},
         "2": {"name": "SUJALBHAI RAMESHBHAI RATHOD", "enroll": "403840019", "mobile": "6352546992", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "NAVINAGARI, DHAVAT, DHAVAT - 391210"},
@@ -247,7 +246,6 @@
             document.getElementById('taluka').value = 'અંકલેશ્વર';
             document.getElementById('district').value = 'ભરૂચ';
 
-            // આધાર નંબર ફેચ કરીને ૩ બોક્સમાં અને પ્રિન્ટ માટે સેટ કરો
             let adh = (t.aadhaar || '').replace(/\s+/g, '');
             if (adh.length === 12) {
                 document.getElementById('aadhaar1').value = adh.substring(0, 4);
@@ -260,7 +258,6 @@
             }
             updatePrintAadhaar();
 
-            // IFSC કોડના આધારે બેંકનું નામ ઓટો-સિલેક્ટ કરો
             const ifsc = t.ifsc.toUpperCase();
             if (ifsc.startsWith('BARB')) {
                 document.getElementById('bank_name').value = 'BANK OF BARODA';
@@ -310,7 +307,6 @@
         document.getElementById('printAadhaarDisplay').innerText = fullAdh;
     }
 
-    // આધાર બોક્સમાં ટાઈપ કરતી વખતે પ્રિન્ટ વ્યૂ અપડેટ કરો
     document.querySelectorAll('#aadhaar1, #aadhaar2, #aadhaar3').forEach(input => {
         input.addEventListener('input', updatePrintAadhaar);
     });
@@ -384,7 +380,7 @@
             branch_name: document.getElementById('branch_name').value,
             bank_acc: document.getElementById('bank_acc').value,
             ifsc: document.getElementById('ifsc').value,
-            aadhaar: document.getElementById('aadhaar1.value') + ' ' + document.getElementById('aadhaar2.value') + ' ' + document.getElementById('aadhaar3.value',
+            aadhaar: document.getElementById('aadhaar1').value + ' ' + document.getElementById('aadhaar2').value + ' ' + document.getElementById('aadhaar3').value,
             address: document.getElementById('address').value,
             taluka: document.getElementById('taluka').value,
             district: document.getElementById('district').value
