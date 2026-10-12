@@ -6,9 +6,9 @@
     <title>ઔદ્યોગિક તાલીમ સંસ્થા, અંકલેશ્વર - તાલીમાર્થી નોંધણી ફોર્મ</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; color: #333; font-size: 13px; }
-        .container { max-width: 750px; background: #fff; margin: auto; padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .container { max-width: 750px; background: #fff; margin: auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h2 { text-align: center; color: #1a73e8; margin-bottom: 2px; font-size: 18px; }
-        .sub-header { text-align: center; font-size: 12px; color: #666; margin-bottom: 12px; font-weight: bold; }
+        .sub-header { text-align: center; font-size: 12px; color: #666; margin-bottom: 15px; font-weight: bold; }
         .form-group { margin-bottom: 8px; position: relative; }
         label { display: block; font-weight: bold; margin-bottom: 2px; color: #444; font-size: 12px; }
         input, select, textarea { width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; box-sizing: border-box; text-transform: uppercase; }
@@ -24,7 +24,7 @@
         .print-aadhaar-text { display: none; }
 
         .hidden { display: none !important; }
-        .btn-container { text-align: center; margin-top: 12px; }
+        .btn-container { text-align: center; margin-top: 15px; }
         button { background-color: #1a73e8; color: white; border: none; padding: 10px 20px; font-size: 14px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
         button:hover { background-color: #1557b0; }
 
@@ -246,7 +246,7 @@
             document.getElementById('taluka').value = 'અંકલેશ્વર';
             document.getElementById('district').value = 'ભરૂચ';
 
-            let adh = (t.aadhaar || '').replace(/\s+/g, '');
+            let adh = (t.aadhaar || '').replace(/\D/g, '');
             if (adh.length === 12) {
                 document.getElementById('aadhaar1').value = adh.substring(0, 4);
                 document.getElementById('aadhaar2').value = adh.substring(4, 8);
@@ -370,6 +370,11 @@
             finalBankName = document.getElementById('other_bank_name').value.toUpperCase();
         }
 
+        const a1 = document.getElementById('aadhaar1').value;
+        const a2 = document.getElementById('aadhaar2').value;
+        const a3 = document.getElementById('aadhaar3').value;
+        const fullAadhaar = (a1 && a2 && a3) ? `${a1} ${a2} ${a3}` : '';
+
         const formData = {
             roll_no: document.getElementById('rollInput').value,
             name: document.getElementById('name').value,
@@ -380,7 +385,7 @@
             branch_name: document.getElementById('branch_name').value,
             bank_acc: document.getElementById('bank_acc').value,
             ifsc: document.getElementById('ifsc').value,
-            aadhaar: document.getElementById('aadhaar1').value + ' ' + document.getElementById('aadhaar2').value + ' ' + document.getElementById('aadhaar3').value,
+            aadhaar: fullAadhaar,
             address: document.getElementById('address').value,
             taluka: document.getElementById('taluka').value,
             district: document.getElementById('district').value
