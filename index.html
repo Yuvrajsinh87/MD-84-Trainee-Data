@@ -1,1 +1,241 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ઔદ્યોગિક તાલીમ સંસ્થા, અંકલેશ્વર - તાલીમાર્થી નોંધણી ફોર્મ</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 800px; background: #fff; margin: auto; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #1a73e8; margin-bottom: 5px; }
+        .sub-header { text-align: center; font-size: 14px; color: #666; margin-bottom: 25px; font-weight: bold; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #444; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; box-sizing: border-box; text-transform: uppercase; }
+        input:focus, select:focus, textarea:focus { border-color: #1a73e8; outline: none; box-shadow: 0 0 5px rgba(26,115,232,0.3); }
+        .missing-field { background-color: #fff3cd !important; border-color: #ffeba4 !important; }
+        .aadhaar-group { display: flex; gap: 10px; }
+        .aadhaar-group input { text-align: center; font-weight: bold; letter-spacing: 2px; }
+        .btn-container { text-align: center; margin-top: 30px; }
+        button { background-color: #1a73e8; color: white; border: none; padding: 12px 25px; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
+        button:hover { background-color: #1557b0; }
+        @media print {
+            body { background: #fff; padding: 0; }
+            .container { box-shadow: none; padding: 0; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>ઔદ્યોગિક તાલીમ સંસ્થા, અંકલેશ્વર</h2>
+    <div class="sub-header">મિકેનિક ડીઝલ ટ્રેડ - તાલીમાર્થી માહિતી પત્રક (બૅચ ૮૪)</div>
+
+    <div class="form-group no-print">
+        <label for="traineeSelect">તાલીમાર્થીનું નામ પસંદ કરો (એક્સેલ ડેટામાંથી ઓટો-ફિલ):</label>
+        <select id="traineeSelect" onchange="loadTraineeData()">
+            <option value="">-- નામ પસંદ કરો --</option>
+        </select>
+    </div>
+
+    <form id="registrationForm" onsubmit="submitForm(event)">
+        <div class="form-group">
+            <label>તાલીમાર્થીનું પૂરું નામ (Trainee Full Name):</label>
+            <input type="text" id="name" required>
+        </div>
+
+        <div class="form-group">
+            <label>એનરોલમેન્ટ નંબર (Enrollment No):</label>
+            <input type="text" id="enroll">
+        </div>
+
+        <div class="form-group">
+            <label>તાલીમાર્થીનો મોબાઈલ નંબર:</label>
+            <input type="tel" id="mobile" maxlength="10">
+        </div>
+
+        <div class="form-group">
+            <label>વાલીનો મોબાઈલ નંબર:</label>
+            <input type="tel" id="guardian_mobile" maxlength="10" class="missing-field" placeholder="માહિતી ખૂટે છે - કૃપા કરીને ભરો">
+        </div>
+
+        <div class="form-group">
+            <label>બેંકનું નામ (Bank Name):</label>
+            <select id="bank_name" class="missing-field" onchange="checkMissingFields()">
+                <option value="">-- બેંક પસંદ કરો --</option>
+                <option value="BANK OF BARODA">BANK OF BARODA (બેંક ઓફ બરોડા)</option>
+                <option value="STATE BANK OF INDIA">STATE BANK OF INDIA (સ્ટેટ બેંક ઓફ ઇન્ડિયા)</option>
+                <option value="HDFC BANK">HDFC BANK (એચડીએફસી બેંક)</option>
+                <option value="ICICI BANK">ICICI BANK (આઈસીઆઈસીઆઈ બેંક)</option>
+                <option value="PUNJAB NATIONAL BANK">PUNJAB NATIONAL BANK (પંજાબ નેશનલ બેંક)</option>
+                <option value="BANK OF INDIA">BANK OF INDIA (બેંક ઓફ ઇન્ડિયા)</option>
+                <option value="AXIS BANK">AXIS BANK (એક્સિસ બેંક)</option>
+                <option value="KOTAK MAHINDRA BANK">KOTAK MAHINDRA BANK (કોટક મહેન્દ્રા બેંક)</option>
+                <option value="UCO BANK">UCO BANK (યુકો બેંક)</option>
+                <option value="UNION BANK OF INDIA">UNION BANK OF INDIA (યુનિયન બેંક ઓફ ઇન્ડિયા)</option>
+                <option value="CANARA BANK">CANARA BANK (કેનરા બેંક)</option>
+                <option value="BARODA GUJARAT GRAMIN BANK">BARODA GUJARAT GRAMIN BANK (બરોડા ગુજરાત ગ્રામીણ બેંક)</option>
+                <option value="OTHER">અન્ય બેંક (OTHER)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>બેંક બ્રાન્ચનું નામ (Branch Name):</label>
+            <input type="text" id="branch_name" class="missing-field" placeholder="બ્રાન્ચનું નામ લખો">
+        </div>
+
+        <div class="form-group">
+            <label>બેંક એકાઉન્ટ નંબર (આગળના ઝીરો સચવાશે):</label>
+            <input type="text" id="bank_acc">
+        </div>
+
+        <div class="form-group">
+            <label>બેંક આઈએફએસસી કોડ (IFSC Code):</label>
+            <input type="text" id="ifsc">
+        </div>
+
+        <div class="form-group">
+            <label>આધાર કાર્ડ નંબર (૪-૪-૪ અંકના ખાના):</label>
+            <div class="aadhaar-group">
+                <input type="text" id="aadhaar1" maxlength="4" oninput="moveFocus(this, 'aadhaar2')">
+                <input type="text" id="aadhaar2" maxlength="4" oninput="moveFocus(this, 'aadhaar3')">
+                <input type="text" id="aadhaar3" maxlength="4">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>પૂરું સરનામું (Address):</label>
+            <textarea id="address" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>તાલુકો:</label>
+            <input type="text" id="taluka" class="missing-field" value="અંકલેશ્વર">
+        </div>
+
+        <div class="form-group">
+            <label>જિલ્લો:</label>
+            <input type="text" id="district" class="missing-field" value="ભરૂચ">
+        </div>
+
+        <div class="btn-container no-print">
+            <button type="submit">ડેટા સેવ કરો અને PDF પ્રિન્ટ/ડાઉનલોડ કરો</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // મર્જ કરેલ ૪૧ તાલીમાર્થીઓનો ડેટા
+    const traineesData = [
+        {"name": "MANISHBHAI DHARMESHBHAI VASAVA", "mobile": "7859895395", "guardian_mobile": "", "bank_acc": "2210100049097", "ifsc": "BARB0ANKLES", "address": "PADMAVATI SOCIETY, PRATHAMIK SHALA, ANKLESHWAR - 393001", "taluka": "", "district": "", "enroll": "403840018"},
+        {"name": "SUJALBHAI RAMESHBHAI RATHOD", "mobile": "6352546992", "guardian_mobile": "", "bank_acc": "", "ifsc": "", "address": "NAVINAGARI, DHAVAT, DHAVAT - 391210", "taluka": "", "district": "", "enroll": "403840019"},
+        {"name": "HIMLESHKUMAR SURESHBHAI VASAVA", "mobile": "9274925189", "guardian_mobile": "", "bank_acc": "", "ifsc": "", "address": "VADI FALIYU, PRATHAMIK SHALA DIWA, NAVA DIWA - 393001", "taluka": "", "district": "", "enroll": "403840180"},
+        {"name": "AYUSHBHAI SHAMJIBHAI MAKVANA", "mobile": "9023113573", "guardian_mobile": "", "bank_acc": "3005010000000", "ifsc": "BARB0BGGBXX", "address": "ALEX FARM HOUSE, UCHHALI, UCHHALI - 393001", "taluka": "", "district": "", "enroll": "403840530"}
+    ];
+
+    window.onload = function() {
+        const select = document.getElementById('traineeSelect');
+        traineesData.forEach((t, index) => {
+            let opt = document.createElement('option');
+            opt.value = index;
+            opt.textContent = t.name;
+            select.appendChild(opt);
+        });
+    };
+
+    function loadTraineeData() {
+        const index = document.getElementById('traineeSelect').value;
+        if (index === "") return;
+        const t = traineesData[index];
+
+        document.getElementById('name').value = t.name || '';
+        document.getElementById('enroll').value = t.enroll || '';
+        document.getElementById('mobile').value = t.mobile || '';
+        document.getElementById('guardian_mobile').value = t.guardian_mobile || '';
+        document.getElementById('bank_acc').value = t.bank_acc || '';
+        document.getElementById('ifsc').value = t.ifsc || '';
+        document.getElementById('address').value = t.address || '';
+        document.getElementById('taluka').value = t.taluka || 'અંકલેશ્વર';
+        document.getElementById('district').value = t.district || 'ભરૂચ';
+
+        // IFSC કોડના આધારે ઓટોમેટિક બેંક પસંદગી
+        if (t.ifsc.startsWith('BARB')) {
+            document.getElementById('bank_name').value = 'BANK OF BARODA';
+        } else if (t.ifsc.startsWith('SBIN')) {
+            document.getElementById('bank_name').value = 'STATE BANK OF INDIA';
+        } else if (t.ifsc.startsWith('HDFC')) {
+            document.getElementById('bank_name').value = 'HDFC BANK';
+        } else if (t.ifsc.startsWith('ICIC')) {
+            document.getElementById('bank_name').value = 'ICICI BANK';
+        } else if (t.ifsc.startsWith('PUNB')) {
+            document.getElementById('bank_name').value = 'PUNJAB NATIONAL BANK';
+        }
+
+        checkMissingFields();
+    }
+
+    function checkMissingFields() {
+        const fields = ['guardian_mobile', 'bank_name', 'branch_name', 'taluka', 'district'];
+        fields.forEach(id => {
+            let el = document.getElementById(id);
+            if (el.value.trim() === "") {
+                el.classList.add('missing-field');
+            } else {
+                el.classList.remove('missing-field');
+            }
+        });
+    }
+
+    function moveFocus(current, nextFieldId) {
+        if (current.value.length >= current.maxLength) {
+            document.getElementById(nextFieldId).focus();
+        }
+    }
+
+    // ઓટો કેપિટલ
+    document.querySelectorAll('input, textarea').forEach(element => {
+        element.addEventListener('input', function(e) {
+            if(e.target.id !== 'mobile' && e.target.id !== 'guardian_mobile' && e.target.id !== 'bank_acc' && !e.target.id.includes('aadhaar')) {
+                this.value = this.value.toUpperCase();
+            }
+            checkMissingFields();
+        });
+    });
+
+    function submitForm(event) {
+        event.preventDefault();
+        
+        const formData = {
+            name: document.getElementById('name').value,
+            enroll: document.getElementById('enroll').value,
+            mobile: document.getElementById('mobile').value,
+            guardian_mobile: document.getElementById('guardian_mobile').value,
+            bank_name: document.getElementById('bank_name').value,
+            branch_name: document.getElementById('branch_name').value,
+            bank_acc: document.getElementById('bank_acc').value,
+            ifsc: document.getElementById('ifsc').value,
+            aadhaar: document.getElementById('aadhaar1').value + '-' + document.getElementById('aadhaar2').value + '-' + document.getElementById('aadhaar3').value,
+            address: document.getElementById('address').value,
+            taluka: document.getElementById('taluka').value,
+            district: document.getElementById('district').value
+        };
+
+        // અહીં આપની Google Apps Script URL સેટ કરી દીધી છે
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzKuiUMy3O1yXRexv3T14SUgW1OdAmNbPt9d0MKlHYCCnN1fy3pYr0tD9LcotJAXYFVCw/exec';
+        
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) })
+        .then(() => {
+            alert('ડેટા સફળતાપૂર્વક Google Sheet માં સેવ થઈ ગયો છે!');
+            window.print();
+        })
+        .catch(error => {
+            console.error('Error!', error.message);
+            window.print();
+        });
+    }
+</script>
+
+</body>
+</html>
 
