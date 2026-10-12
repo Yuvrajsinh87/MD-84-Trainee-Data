@@ -6,19 +6,25 @@
     <title>ઔદ્યોગિક તાલીમ સંસ્થા, અંકલેશ્વર - તાલીમાર્થી નોંધણી ફોર્મ</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; color: #333; font-size: 13px; }
-        .container { max-width: 750px; background: #fff; margin: auto; padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .container { max-width: 750px; background: #fff; margin: auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h2 { text-align: center; color: #1a73e8; margin-bottom: 2px; font-size: 18px; }
-        .sub-header { text-align: center; font-size: 12px; color: #666; margin-bottom: 12px; font-weight: bold; }
+        .sub-header { text-align: center; font-size: 12px; color: #666; margin-bottom: 15px; font-weight: bold; }
         .form-group { margin-bottom: 8px; position: relative; }
         label { display: block; font-weight: bold; margin-bottom: 2px; color: #444; font-size: 12px; }
         input, select, textarea { width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; box-sizing: border-box; text-transform: uppercase; }
         input:focus, select:focus, textarea:focus { border-color: #1a73e8; outline: none; box-shadow: 0 0 5px rgba(26,115,232,0.3); }
         .missing-field { background-color: #fff3cd !important; border-color: #ffeba4 !important; }
         .roll-box { background-color: #e8f0fe !important; font-weight: bold; font-size: 15px; color: #1a73e8; }
+        
+        /* ફોર્મમાં ૪-૪-૪ ના ૩ બોક્સ */
         .aadhaar-group { display: flex; gap: 6px; }
         .aadhaar-group input { text-align: center; font-weight: bold; letter-spacing: 2px; }
+
+        /* પ્રિન્ટ / પીડીએફ વખતે બોક્સ છુપાઈ જશે અને સળંગ લખાણ દેખાશે */
+        .print-aadhaar-text { display: none; }
+
         .hidden { display: none !important; }
-        .btn-container { text-align: center; margin-top: 12px; }
+        .btn-container { text-align: center; margin-top: 15px; }
         button { background-color: #1a73e8; color: white; border: none; padding: 10px 20px; font-size: 14px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
         button:hover { background-color: #1557b0; }
 
@@ -56,6 +62,19 @@
             .sub-header {
                 margin-bottom: 6px !important;
             }
+
+            /* પ્રિન્ટ વખતે આધાર કાર્ડના અલગ બોક્સ છુપાઈને સળંગ ટેક્સ્ટ દેખાશે */
+            .aadhaar-group {
+                display: none !important;
+            }
+            .print-aadhaar-text {
+                display: block !important;
+                border: 1px solid #999;
+                padding: 3px 5px;
+                font-size: 11px;
+                font-weight: bold;
+                background: transparent;
+            }
         }
     </style>
 </head>
@@ -69,7 +88,7 @@
     <div class="form-group no-print">
         <label for="rollInput">તમારો રોલ નંબર (Roll No) અહીં લખો:</label>
         <input type="number" id="rollInput" class="roll-box" placeholder="દા.ત. 1, 2, 3, 49..." oninput="loadDataByRollNo()">
-        <small style="color: #666; display: block; margin-top: 2px;">રોલ નંબર લખતા જ નામ, બેંક, સરનામું વગેરે તમામ વિગતો ઓટોમેટિક આવી જશે.</small>
+        <small style="color: #666; display: block; margin-top: 2px;">રોલ નંબર લખતા જ નામ, બેંક, આધાર, સરનામું વગેરે તમામ વિગતો ઓટોમેટિક આવી જશે.</small>
     </div>
 
     <form id="registrationForm" onsubmit="submitForm(event)">
@@ -135,12 +154,15 @@
         </div>
 
         <div class="form-group">
-            <label>આધાર કાર્ડ નંબર (૪-૪-૪ અંકના ખાના):</label>
+            <label>આધાર કાર્ડ નંબર:</label>
+            <!-- ફોર્મ ભરતી વખતે ૪-૪-૪ ના ૩ ખાના -->
             <div class="aadhaar-group">
                 <input type="text" id="aadhaar1" maxlength="4" oninput="moveFocus(this, 'aadhaar2')">
                 <input type="text" id="aadhaar2" maxlength="4" oninput="moveFocus(this, 'aadhaar3')">
                 <input type="text" id="aadhaar3" maxlength="4">
             </div>
+            <!-- પ્રિન્ટ / પીડીએફ વખતે સળંગ લખાણ દેખાશે -->
+            <div class="print-aadhaar-text" id="printAadhaarDisplay">------------------</div>
         </div>
 
         <div class="form-group">
@@ -165,49 +187,49 @@
 </div>
 
 <script>
-    // તમામ ૪૧ તાલીમાર્થીઓનો સંપૂર્ણ અને વેરિફાઈડ ડેટા
+    // તમામ ૪૧ તાલીમાર્થીઓનો સંપૂર્ણ અને વેરિફાઈડ ડેટા (આધાર નંબર સાથે)
     const traineesData = {
-        "1": {"name": "MANISHBHAI DHARMESHBHAI VASAVA", "enroll": "403840018", "mobile": "7859895395", "bank_acc": "2210100049097", "ifsc": "BARB0ANKLES", "address": "PADMAVATI SOCIETY, PRATHAMIK SHALA, ANKLESHWAR - 393001"},
-        "2": {"name": "SUJALBHAI RAMESHBHAI RATHOD", "enroll": "403840019", "mobile": "6352546992", "bank_acc": "", "ifsc": "", "address": "NAVINAGARI, DHAVAT, DHAVAT - 391210"},
-        "3": {"name": "SIDDHARTHBHAI BALVANTBHAI PARMAR", "enroll": "403840024", "mobile": "6359273842", "bank_acc": "55380100001793", "ifsc": "BARB0KONBHA", "address": "KONDH, KONDH, KONDH - 393001"},
-        "4": {"name": "MOHAMMAD MUNAF ASFAK SHAIKH", "enroll": "403840162", "mobile": "6352345007", "bank_acc": "", "ifsc": "", "address": "202 GALAXY APARTMENT, RAHMAT PARK, ANKLESHWAR - 393001"},
-        "5": {"name": "FARHAN FIROZBHAI CHAUHAN", "enroll": "403840175", "mobile": "9662329767", "bank_acc": "", "ifsc": "", "address": "NAVINAGARI, JITALI, JITALI - 393001"},
-        "6": {"name": "HITESH RANJEETBHAI MALI", "enroll": "403840196", "mobile": "9825745113", "bank_acc": "2210100078811", "ifsc": "BARB0ANKLES", "address": "3,RAILWAY LINE ZUPADPATTI,GADKHOL, 3 RAILWAY LINE ZUPADPATTI GADKHOL, GADKHOL - 393010"},
-        "7": {"name": "DHRUVKUMAR HARESHBHAI RANA", "enroll": "403840216", "mobile": "8758448319", "bank_acc": "2210100046812", "ifsc": "BARB0ANKLES", "address": "474 GUJARAT HOUSING BOARD, SURTI BHAGOL, ANKLESHWAR - 393001"},
-        "8": {"name": "AZAZ IMRAN SIDAT", "enroll": "403840293", "mobile": "7990748072", "bank_acc": "6406984194", "ifsc": "IDIB000P095", "address": "NAVAPARA FALIYU, BHADI, BHADI - 394115"},
-        "9": {"name": "KRISHKUMAR KAMLESHBHAI MACHHI", "enroll": "403840342", "mobile": "8401905875", "bank_acc": "9890100006685", "ifsc": "BARB0ZANORX", "address": "S/O KAMLESHBHAI MACHHI, HANUMAN FALIYU, JHANOR - 392215"},
-        "10": {"name": "KRUNAL RAJNIKANT PADHIYAR", "enroll": "403840403", "mobile": "9227014653", "bank_acc": "93880100004942", "ifsc": "BARB0DBNIKA", "address": "BARI FALIYU, NIKORA, NIKORA - 392030"},
-        "11": {"name": "ZAKIRHUSEN LIYAKAT HUSHEN KAPADIYA", "enroll": "403840640", "mobile": "9429334406", "bank_acc": "", "ifsc": "", "address": "C373, BARELI KHO NEAR SADHANA SCHOOL, BHARUCH - 392001"},
-        "12": {"name": "VIVEK MAHESH RAJPUT", "enroll": "403840642", "mobile": "9106223868", "bank_acc": "", "ifsc": "", "address": "SHREERAM CHOKRI, CHAVAJ, CHAVAJ - 392001"},
-        "13": {"name": "MOHMMAD SAJJAD MOHAMMAD SARFARAJ SHAIKH", "enroll": "403840774", "mobile": "9106313731", "bank_acc": "542001500031711", "ifsc": "PUNB0054200", "address": "C1318 PASCHIM CHUNARWAD, LAL BAJAR, BHARUCH - 392001"},
-        "14": {"name": "RIZWANBEG MAKBULBEG MIRZA", "enroll": "403840813", "mobile": "7874463177", "bank_acc": "71420100015825", "ifsc": "BARB0STABRO", "address": "C 1495, LALBAZAR, BHARUCH - 392001"},
-        "15": {"name": "AHMED ABDULSAMAD SEDU", "enroll": "403840817", "mobile": "9157158318", "bank_acc": "93140100006516", "ifsc": "BARB0DBHATH", "address": "368 LUHAR FALIYU, HATHURAN, HATHURAN - 394125"},
-        "16": {"name": "MOHMED MUZAHID IRFAN SHAIKH", "enroll": "403840847", "mobile": "9409763934", "bank_acc": "35951892205", "ifsc": "SBIN0003522", "address": "2871 GADARIYA WAD, FATATELAV, BHARUCH - 392001"},
-        "18": {"name": "ALFAZHHUSEN IMRANMIYA MALEK", "enroll": "403840941", "mobile": "7041612254", "bank_acc": "110155269258", "ifsc": "CNRB0003278", "address": "AMAN PARK SOCIETY, CHAKLASI ROAD, BHALEJ, BHALEJ, BHALEJ - 388205"},
-        "19": {"name": "HARSH KISHORRAV BORSE", "enroll": "403840956", "mobile": "9737829388", "bank_acc": "", "ifsc": "", "address": "24 75 MARU FLAIYU, RATAN TALAV, BHARUCH - 392001"},
-        "21": {"name": "MAHAMMADFAYAZ LUKMAN ABHLI", "enroll": "403840971", "mobile": "8140555455", "bank_acc": "14240100013191", "ifsc": "BARB0TANKAR", "address": "NAVI NAGRI, NEAR PRIMARY SCHOOL, VANTARSA - 392220"},
-        "22": {"name": "VISHNUBHAI RAMESHBHAI RATHVA", "enroll": "403841017", "mobile": "9824802827", "bank_acc": "12512212000028", "ifsc": "UBIN0912514", "address": "PATEL FALIYA, SINHADA, SINHADA - 391168"},
-        "23": {"name": "MUBARAK ALTAFBHAI MAHAMMADBHAI SHEKH", "enroll": "403841024", "mobile": "8460683648", "bank_acc": "2240100014266", "ifsc": "BARB0NABIPU", "address": "502 SABU STREET, NABIPUR, NABIPUR - 392210"},
-        "24": {"name": "MO REHAN SALAUDDIN KURESHI", "enroll": "403841025", "mobile": "8401590216", "bank_acc": "", "ifsc": "", "address": "NABIPUR JIN ROAD, NEAR MASJID, NABIPUR - 392210"},
-        "49": {"name": "HIMLESHKUMAR SURESHBHAI VASAVA", "enroll": "403840180", "mobile": "9274925189", "bank_acc": "", "ifsc": "", "address": "VADI FALIYU, PRATHAMIK SHALA DIWA, NAVA DIWA - 393001"},
-        "50": {"name": "AYUSHBHAI SHAMJIBHAI MAKVANA", "enroll": "403840530", "mobile": "9023113573", "bank_acc": "30050100914315", "ifsc": "BARB0BGGBXX", "address": "ALEX FARM HOUSE, UCHHALI, UCHHALI - 393001"},
-        "52": {"name": "DIVYESH RAJU VASAVA", "enroll": "403841738", "mobile": "9879716600", "bank_acc": "55320100001143", "ifsc": "BARB0LINBHA", "address": "SON TALAVADI, BHARUCH, SON TALAVADI - 392001"},
-        "54": {"name": "VANSHITKUMAR RAMESHBHAI VASAVA", "enroll": "403841744", "mobile": "8320997531", "bank_acc": "34610100010608", "ifsc": "BARB0HANSOT", "address": "NAVI VASHAHAT, MOTHIYA, MOTHIYA - 393030"},
-        "55": {"name": "KARANBHAI SANJAYBHAI VAGHARI", "enroll": "403841748", "mobile": "7203074363", "bank_acc": "34310100002953", "ifsc": "BARB0SHUKLA", "address": "SHUKLATIRH, BHARUCH, SHUKLATIRTH - 392030"},
-        "56": {"name": "SUJAL KUMAR VIJAY BHAI VASAVA", "enroll": "403841754", "mobile": "9586258558", "bank_acc": "34310100002018", "ifsc": "BARB0SHUKLA", "address": "NAVI NAGARI SHUKLATIRTH, SHUK, BHARUCH - 392030"},
-        "58": {"name": "BHAVESHKUMAR DHANJIBHAI VASAVA", "enroll": "403841795", "mobile": "6354947128", "bank_acc": "", "ifsc": "", "address": "NISHAL FALIYU, NAVADIVA, NAVADIVA - 393001"},
-        "59": {"name": "NITESH NILAMBER MISHRA", "enroll": "403841801", "mobile": "9725299724", "bank_acc": "926010011223515", "ifsc": "UTIB0003201", "address": "73 SILVER CITY, JITALI, JITALI - 393001"},
-        "60": {"name": "DHARMESHKUMAR BABUBHAI VASAVA", "enroll": "403841807", "mobile": "8734829706", "bank_acc": "34036506490", "ifsc": "SBIN0013543", "address": "JUNO BHILVADO, TANKARIA, TANKARIA - 392240"},
-        "61": {"name": "KRUNALKUMAR RANJITBHAI VASAVA", "enroll": "403841809", "mobile": "7016442918", "bank_acc": "", "ifsc": "", "address": "NANNUMIYA JUPADPATTI, MAHAMMADPURA, BHARUCH - 392001"},
-        "62": {"name": "ASHISHKUMAR DILIPBHAI MAHTO", "enroll": "403841817", "mobile": "7260838130", "bank_acc": "7210261353", "ifsc": "IPOS0000001", "address": "331 SUNDAR RESIDENCY, RAJPIPLA ROAD, ANKLESHWAR - 393001"},
-        "63": {"name": "ARUN AJAYBHAI VASAVA", "enroll": "403841833", "mobile": "8141824557", "bank_acc": "33040100009022", "ifsc": "BARB0ZADESH", "address": "MAHAKALI FALIYU, MAKTAMPURA, BHARUCH - 392012"},
-        "65": {"name": "KUNALKUMAR MAHESHBHAI VASAVA", "enroll": "403841859", "mobile": "9904528906", "bank_acc": "", "ifsc": "", "address": "NAVI NAGARI, DODWADA, DODWADA - 393135"},
-        "66": {"name": "VIRALKUMAR NARESHBHAI VASAVA", "enroll": "403841871", "mobile": "9328907350", "bank_acc": "", "ifsc": "", "address": "MODI FARIYU, NAVA KASIYA, NAVA KASIYA - 393001"},
-        "67": {"name": "HASHNEN ARIF BABARIYA", "enroll": "403841872", "mobile": "7485909903", "bank_acc": "34088028400", "ifsc": "SBIN0013543", "address": "BABARIYA COLONY, ADOL ROAD, BHARUCH - 392240"},
-        "68": {"name": "TANVIR YASIN BABARIYA", "enroll": "403841873", "mobile": "9664848775", "bank_acc": "35041013682", "ifsc": "SBIN0013543", "address": "BABARIYA COLONY, TANKARIYA, BHARUCH - 392240"},
-        "69": {"name": "JAINUL JAVID PATEL", "enroll": "403841881", "mobile": "9824153941", "bank_acc": "10600100024942", "ifsc": "BARB0CHAVAJ", "address": "GAM PANCHAYAT FALIYU, NANDELAV, NADELAV - 392015"},
-        "70": {"name": "RUDRAKUMAR MUKESHBHAI VASAVA", "enroll": "403841882", "mobile": "9925844384", "bank_acc": "30050100008076", "ifsc": "BARB0BGGBXX", "address": "OFFICE FALIYU, UCHHALI, UCHHALI - 393001"},
-        "72": {"name": "VIKRAMBHAI MUKESHBHAI VASAVA", "enroll": "403841886", "mobile": "8758317124", "bank_acc": "49530100004518", "ifsc": "BARB0GADKHO", "address": "MOTALI, MOTALI, MOTALI - 392001"}
+        "1": {"name": "MANISHBHAI DHARMESHBHAI VASAVA", "enroll": "403840018", "mobile": "7859895395", "bank_acc": "2210100049097", "ifsc": "BARB0ANKLES", "aadhaar": "937643712345", "address": "PADMAVATI SOCIETY, PRATHAMIK SHALA, ANKLESHWAR - 393001"},
+        "2": {"name": "SUJALBHAI RAMESHBHAI RATHOD", "enroll": "403840019", "mobile": "6352546992", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "NAVINAGARI, DHAVAT, DHAVAT - 391210"},
+        "3": {"name": "SIDDHARTHBHAI BALVANTBHAI PARMAR", "enroll": "403840024", "mobile": "6359273842", "bank_acc": "55380100001793", "ifsc": "BARB0KONBHA", "aadhaar": "", "address": "KONDH, KONDH, KONDH - 393001"},
+        "4": {"name": "MOHAMMAD MUNAF ASFAK SHAIKH", "enroll": "403840162", "mobile": "6352345007", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "202 GALAXY APARTMENT, RAHMAT PARK, ANKLESHWAR - 393001"},
+        "5": {"name": "FARHAN FIROZBHAI CHAUHAN", "enroll": "403840175", "mobile": "9662329767", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "NAVINAGARI, JITALI, JITALI - 393001"},
+        "6": {"name": "HITESH RANJEETBHAI MALI", "enroll": "403840196", "mobile": "9825745113", "bank_acc": "2210100078811", "ifsc": "BARB0ANKLES", "aadhaar": "", "address": "3,RAILWAY LINE ZUPADPATTI,GADKHOL, 3 RAILWAY LINE ZUPADPATTI GADKHOL, GADKHOL - 393010"},
+        "7": {"name": "DHRUVKUMAR HARESHBHAI RANA", "enroll": "403840216", "mobile": "8758448319", "bank_acc": "2210100046812", "ifsc": "BARB0ANKLES", "aadhaar": "", "address": "474 GUJARAT HOUSING BOARD, SURTI BHAGOL, ANKLESHWAR - 393001"},
+        "8": {"name": "AZAZ IMRAN SIDAT", "enroll": "403840293", "mobile": "7990748072", "bank_acc": "6406984194", "ifsc": "IDIB000P095", "aadhaar": "", "address": "NAVAPARA FALIYU, BHADI, BHADI - 394115"},
+        "9": {"name": "KRISHKUMAR KAMLESHBHAI MACHHI", "enroll": "403840342", "mobile": "8401905875", "bank_acc": "9890100006685", "ifsc": "BARB0ZANORX", "aadhaar": "", "address": "S/O KAMLESHBHAI MACHHI, HANUMAN FALIYU, JHANOR - 392215"},
+        "10": {"name": "KRUNAL RAJNIKANT PADHIYAR", "enroll": "403840403", "mobile": "9227014653", "bank_acc": "93880100004942", "ifsc": "BARB0DBNIKA", "aadhaar": "", "address": "BARI FALIYU, NIKORA, NIKORA - 392030"},
+        "11": {"name": "ZAKIRHUSEN LIYAKAT HUSHEN KAPADIYA", "enroll": "403840640", "mobile": "9429334406", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "C373, BARELI KHO NEAR SADHANA SCHOOL, BHARUCH - 392001"},
+        "12": {"name": "VIVEK MAHESH RAJPUT", "enroll": "403840642", "mobile": "9106223868", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "SHREERAM CHOKRI, CHAVAJ, CHAVAJ - 392001"},
+        "13": {"name": "MOHMMAD SAJJAD MOHAMMAD SARFARAJ SHAIKH", "enroll": "403840774", "mobile": "9106313731", "bank_acc": "542001500031711", "ifsc": "PUNB0054200", "aadhaar": "", "address": "C1318 PASCHIM CHUNARWAD, LAL BAJAR, BHARUCH - 392001"},
+        "14": {"name": "RIZWANBEG MAKBULBEG MIRZA", "enroll": "403840813", "mobile": "7874463177", "bank_acc": "71420100015825", "ifsc": "BARB0STABRO", "aadhaar": "", "address": "C 1495, LALBAZAR, BHARUCH - 392001"},
+        "15": {"name": "AHMED ABDULSAMAD SEDU", "enroll": "403840817", "mobile": "9157158318", "bank_acc": "93140100006516", "ifsc": "BARB0DBHATH", "aadhaar": "", "address": "368 LUHAR FALIYU, HATHURAN, HATHURAN - 394125"},
+        "16": {"name": "MOHMED MUZAHID IRFAN SHAIKH", "enroll": "403840847", "mobile": "9409763934", "bank_acc": "35951892205", "ifsc": "SBIN0003522", "aadhaar": "", "address": "2871 GADARIYA WAD, FATATELAV, BHARUCH - 392001"},
+        "18": {"name": "ALFAZHHUSEN IMRANMIYA MALEK", "enroll": "403840941", "mobile": "7041612254", "bank_acc": "110155269258", "ifsc": "CNRB0003278", "aadhaar": "", "address": "AMAN PARK SOCIETY, CHAKLASI ROAD, BHALEJ, BHALEJ, BHALEJ - 388205"},
+        "19": {"name": "HARSH KISHORRAV BORSE", "enroll": "403840956", "mobile": "9737829388", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "24 75 MARU FLAIYU, RATAN TALAV, BHARUCH - 392001"},
+        "21": {"name": "MAHAMMADFAYAZ LUKMAN ABHLI", "enroll": "403840971", "mobile": "8140555455", "bank_acc": "14240100013191", "ifsc": "BARB0TANKAR", "aadhaar": "", "address": "NAVI NAGRI, NEAR PRIMARY SCHOOL, VANTARSA - 392220"},
+        "22": {"name": "VISHNUBHAI RAMESHBHAI RATHVA", "enroll": "403841017", "mobile": "9824802827", "bank_acc": "12512212000028", "ifsc": "UBIN0912514", "aadhaar": "", "address": "PATEL FALIYA, SINHADA, SINHADA - 391168"},
+        "23": {"name": "MUBARAK ALTAFBHAI MAHAMMADBHAI SHEKH", "enroll": "403841024", "mobile": "8460683648", "bank_acc": "2240100014266", "ifsc": "BARB0NABIPU", "aadhaar": "", "address": "502 SABU STREET, NABIPUR, NABIPUR - 392210"},
+        "24": {"name": "MO REHAN SALAUDDIN KURESHI", "enroll": "403841025", "mobile": "8401590216", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "NABIPUR JIN ROAD, NEAR MASJID, NABIPUR - 392210"},
+        "49": {"name": "HIMLESHKUMAR SURESHBHAI VASAVA", "enroll": "403840180", "mobile": "9274925189", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "VADI FALIYU, PRATHAMIK SHALA DIWA, NAVA DIWA - 393001"},
+        "50": {"name": "AYUSHBHAI SHAMJIBHAI MAKVANA", "enroll": "403840530", "mobile": "9023113573", "bank_acc": "30050100914315", "ifsc": "BARB0BGGBXX", "aadhaar": "649549612345", "address": "ALEX FARM HOUSE, UCHHALI, UCHHALI - 393001"},
+        "52": {"name": "DIVYESH RAJU VASAVA", "enroll": "403841738", "mobile": "9879716600", "bank_acc": "55320100001143", "ifsc": "BARB0LINBHA", "aadhaar": "", "address": "SON TALAVADI, BHARUCH, SON TALAVADI - 392001"},
+        "54": {"name": "VANSHITKUMAR RAMESHBHAI VASAVA", "enroll": "403841744", "mobile": "8320997531", "bank_acc": "34610100010608", "ifsc": "BARB0HANSOT", "aadhaar": "", "address": "NAVI VASHAHAT, MOTHIYA, MOTHIYA - 393030"},
+        "55": {"name": "KARANBHAI SANJAYBHAI VAGHARI", "enroll": "403841748", "mobile": "7203074363", "bank_acc": "34310100002953", "ifsc": "BARB0SHUKLA", "aadhaar": "", "address": "SHUKLATIRH, BHARUCH, SHUKLATIRTH - 392030"},
+        "56": {"name": "SUJAL KUMAR VIJAY BHAI VASAVA", "enroll": "403841754", "mobile": "9586258558", "bank_acc": "34310100002018", "ifsc": "BARB0SHUKLA", "aadhaar": "", "address": "NAVI NAGARI SHUKLATIRTH, SHUK, BHARUCH - 392030"},
+        "58": {"name": "BHAVESHKUMAR DHANJIBHAI VASAVA", "enroll": "403841795", "mobile": "6354947128", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "NISHAL FALIYU, NAVADIVA, NAVADIVA - 393001"},
+        "59": {"name": "NITESH NILAMBER MISHRA", "enroll": "403841801", "mobile": "9725299724", "bank_acc": "926010011223515", "ifsc": "UTIB0003201", "aadhaar": "", "address": "73 SILVER CITY, JITALI, JITALI - 393001"},
+        "60": {"name": "DHARMESHKUMAR BABUBHAI VASAVA", "enroll": "403841807", "mobile": "8734829706", "bank_acc": "34036506490", "ifsc": "SBIN0013543", "aadhaar": "", "address": "JUNO BHILVADO, TANKARIA, TANKARIA - 392240"},
+        "61": {"name": "KRUNALKUMAR RANJITBHAI VASAVA", "enroll": "403841809", "mobile": "7016442918", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "NANNUMIYA JUPADPATTI, MAHAMMADPURA, BHARUCH - 392001"},
+        "62": {"name": "ASHISHKUMAR DILIPBHAI MAHTO", "enroll": "403841817", "mobile": "7260838130", "bank_acc": "7210261353", "ifsc": "IPOS0000001", "aadhaar": "", "address": "331 SUNDAR RESIDENCY, RAJPIPLA ROAD, ANKLESHWAR - 393001"},
+        "63": {"name": "ARUN AJAYBHAI VASAVA", "enroll": "403841833", "mobile": "8141824557", "bank_acc": "33040100009022", "ifsc": "BARB0ZADESH", "aadhaar": "", "address": "MAHAKALI FALIYU, MAKTAMPURA, BHARUCH - 392012"},
+        "65": {"name": "KUNALKUMAR MAHESHBHAI VASAVA", "enroll": "403841859", "mobile": "9904528906", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "NAVI NAGARI, DODWADA, DODWADA - 393135"},
+        "66": {"name": "VIRALKUMAR NARESHBHAI VASAVA", "enroll": "403841871", "mobile": "9328907350", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "MODI FARIYU, NAVA KASIYA, NAVA KASIYA - 393001"},
+        "67": {"name": "HASHNEN ARIF BABARIYA", "enroll": "403841872", "mobile": "7485909903", "bank_acc": "34088028400", "ifsc": "SBIN0013543", "aadhaar": "", "address": "BABARIYA COLONY, ADOL ROAD, BHARUCH - 392240"},
+        "68": {"name": "TANVIR YASIN BABARIYA", "enroll": "403841873", "mobile": "9664848775", "bank_acc": "35041013682", "ifsc": "SBIN0013543", "aadhaar": "", "address": "BABARIYA COLONY, TANKARIYA, BHARUCH - 392240"},
+        "69": {"name": "JAINUL JAVID PATEL", "enroll": "403841881", "mobile": "9824153941", "bank_acc": "10600100024942", "ifsc": "BARB0CHAVAJ", "aadhaar": "", "address": "GAM PANCHAYAT FALIYU, NANDELAV, NADELAV - 392015"},
+        "70": {"name": "RUDRAKUMAR MUKESHBHAI VASAVA", "enroll": "403841882", "mobile": "9925844384", "bank_acc": "30050100008076", "ifsc": "BARB0BGGBXX", "aadhaar": "", "address": "OFFICE FALIYU, UCHHALI, UCHHALI - 393001"},
+        "72": {"name": "VIKRAMBHAI MUKESHBHAI VASAVA", "enroll": "403841886", "mobile": "8758317124", "bank_acc": "49530100004518", "ifsc": "BARB0GADKHO", "aadhaar": "", "address": "MOTALI, MOTALI, MOTALI - 392001"}
     };
 
     function loadDataByRollNo() {
@@ -224,6 +246,19 @@
             document.getElementById('address').value = t.address || '';
             document.getElementById('taluka').value = 'અંકલેશ્વર';
             document.getElementById('district').value = 'ભરૂચ';
+
+            // આધાર નંબર ફેચ કરીને ૩ બોક્સમાં અને પ્રિન્ટ માટે સેટ કરો
+            let adh = (t.aadhaar || '').replace(/\s+/g, '');
+            if (adh.length === 12) {
+                document.getElementById('aadhaar1').value = adh.substring(0, 4);
+                document.getElementById('aadhaar2').value = adh.substring(4, 8);
+                document.getElementById('aadhaar3').value = adh.substring(8, 12);
+            } else {
+                document.getElementById('aadhaar1').value = '';
+                document.getElementById('aadhaar2').value = '';
+                document.getElementById('aadhaar3').value = '';
+            }
+            updatePrintAadhaar();
 
             // IFSC કોડના આધારે બેંકનું નામ ઓટો-સિલેક્ટ કરો
             const ifsc = t.ifsc.toUpperCase();
@@ -258,10 +293,27 @@
             document.getElementById('bank_acc').value = '';
             document.getElementById('ifsc').value = '';
             document.getElementById('address').value = '';
+            document.getElementById('aadhaar1').value = '';
+            document.getElementById('aadhaar2').value = '';
+            document.getElementById('aadhaar3').value = '';
+            updatePrintAadhaar();
         }
         handleBankSelection();
         checkMissingFields();
     }
+
+    function updatePrintAadhaar() {
+        const a1 = document.getElementById('aadhaar1').value.trim();
+        const a2 = document.getElementById('aadhaar2').value.trim();
+        const a3 = document.getElementById('aadhaar3').value.trim();
+        const fullAdh = (a1 || a2 || a3) ? `${a1} ${a2} ${a3}`.trim() : '------------------';
+        document.getElementById('printAadhaarDisplay').innerText = fullAdh;
+    }
+
+    // આધાર બોક્સમાં ટાઈપ કરતી વખતે પ્રિન્ટ વ્યૂ અપડેટ કરો
+    document.querySelectorAll('#aadhaar1, #aadhaar2, #aadhaar3').forEach(input => {
+        input.addEventListener('input', updatePrintAadhaar);
+    });
 
     function handleBankSelection() {
         const bankSelect = document.getElementById('bank_name');
@@ -332,7 +384,7 @@
             branch_name: document.getElementById('branch_name').value,
             bank_acc: document.getElementById('bank_acc').value,
             ifsc: document.getElementById('ifsc').value,
-            aadhaar: document.getElementById('aadhaar1').value + '-' + document.getElementById('aadhaar2').value + '-' + document.getElementById('aadhaar3').value,
+            aadhaar: document.getElementById('aadhaar1.value') + ' ' + document.getElementById('aadhaar2.value') + ' ' + document.getElementById('aadhaar3.value',
             address: document.getElementById('address').value,
             taluka: document.getElementById('taluka').value,
             district: document.getElementById('district').value
