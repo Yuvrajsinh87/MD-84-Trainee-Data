@@ -9,11 +9,12 @@
         .container { max-width: 800px; background: #fff; margin: auto; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h2 { text-align: center; color: #1a73e8; margin-bottom: 5px; }
         .sub-header { text-align: center; font-size: 14px; color: #666; margin-bottom: 25px; font-weight: bold; }
-        .form-group { margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; position: relative; }
         label { display: block; font-weight: bold; margin-bottom: 5px; color: #444; }
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; box-sizing: border-box; text-transform: uppercase; }
         input:focus, select:focus, textarea:focus { border-color: #1a73e8; outline: none; box-shadow: 0 0 5px rgba(26,115,232,0.3); }
         .missing-field { background-color: #fff3cd !important; border-color: #ffeba4 !important; }
+        .roll-box { background-color: #e8f0fe !important; font-weight: bold; font-size: 18px; color: #1a73e8; }
         .aadhaar-group { display: flex; gap: 10px; }
         .aadhaar-group input { text-align: center; font-weight: bold; letter-spacing: 2px; }
         .btn-container { text-align: center; margin-top: 30px; }
@@ -32,11 +33,11 @@
     <h2>ઔદ્યોગિક તાલીમ સંસ્થા, અંકલેશ્વર</h2>
     <div class="sub-header">મિકેનિક ડીઝલ ટ્રેડ - તાલીમાર્થી માહિતી પત્રક (બૅચ ૮૪)</div>
 
+    <!-- Roll Number Search Box -->
     <div class="form-group no-print">
-        <label for="traineeSelect">તાલીમાર્થીનું નામ પસંદ કરો (એક્સેલ ડેટામાંથી ઓટો-ફિલ):</label>
-        <select id="traineeSelect" onchange="loadTraineeData()">
-            <option value="">-- નામ પસંદ કરો --</option>
-        </select>
+        <label for="rollInput">તમારો રોલ નંબર (Roll No) અહીં લખો:</label>
+        <input type="number" id="rollInput" class="roll-box" placeholder="દા.ત. 1, 2, 3..." oninput="loadDataByRollNo()">
+        <small style="color: #666; display: block; margin-top: 5px;">રોલ નંબર લખતા જ તમારી વિગતો ઓટોમેટિક આવી જશે.</small>
     </div>
 
     <form id="registrationForm" onsubmit="submitForm(event)">
@@ -126,52 +127,65 @@
 </div>
 
 <script>
-    // મર્જ કરેલ ૪૧ તાલીમાર્થીઓનો ડેટા
-    const traineesData = [
-        {"name": "MANISHBHAI DHARMESHBHAI VASAVA", "mobile": "7859895395", "guardian_mobile": "", "bank_acc": "2210100049097", "ifsc": "BARB0ANKLES", "address": "PADMAVATI SOCIETY, PRATHAMIK SHALA, ANKLESHWAR - 393001", "taluka": "", "district": "", "enroll": "403840018"},
-        {"name": "SUJALBHAI RAMESHBHAI RATHOD", "mobile": "6352546992", "guardian_mobile": "", "bank_acc": "", "ifsc": "", "address": "NAVINAGARI, DHAVAT, DHAVAT - 391210", "taluka": "", "district": "", "enroll": "403840019"},
-        {"name": "HIMLESHKUMAR SURESHBHAI VASAVA", "mobile": "9274925189", "guardian_mobile": "", "bank_acc": "", "ifsc": "", "address": "VADI FALIYU, PRATHAMIK SHALA DIWA, NAVA DIWA - 393001", "taluka": "", "district": "", "enroll": "403840180"},
-        {"name": "AYUSHBHAI SHAMJIBHAI MAKVANA", "mobile": "9023113573", "guardian_mobile": "", "bank_acc": "3005010000000", "ifsc": "BARB0BGGBXX", "address": "ALEX FARM HOUSE, UCHHALI, UCHHALI - 393001", "taluka": "", "district": "", "enroll": "403840530"}
-    ];
-
-    window.onload = function() {
-        const select = document.getElementById('traineeSelect');
-        traineesData.forEach((t, index) => {
-            let opt = document.createElement('option');
-            opt.value = index;
-            opt.textContent = t.name;
-            select.appendChild(opt);
-        });
+    // એક્સેલ ડેટા (રોલ નંબર સાથે)
+    const traineesData = {
+        "1": {"name": "MANISHBHAI DHARMESHBHAI VASAVA", "enroll": "403840018", "mobile": "7859895395", "bank_acc": "2210100049097", "ifsc": "BARB0ANKLES", "address": "PADMAVATI SOCIETY, PRATHAMIK SHALA, ANKLESHWAR - 393001"},
+        "2": {"name": "SUJALBHAI RAMESHBHAI RATHOD", "enroll": "403840019", "mobile": "6352546992", "bank_acc": "", "ifsc": "", "address": "NAVINAGARI, DHAVAT, DHAVAT - 391210"},
+        "3": {"name": "SIDDHARTHBHAI BALVANTBHAI PARMAR", "enroll": "403840024", "mobile": "6359273842", "bank_acc": "", "ifsc": "", "address": ""},
+        "4": {"name": "MOHAMMAD MUNAF ASFAK SHAIKH", "enroll": "403840162", "mobile": "6352345007", "bank_acc": "", "ifsc": "", "address": ""},
+        "5": {"name": "FARHAN FIROZBHAI CHAUHAN", "enroll": "403840175", "mobile": "9662329767", "bank_acc": "", "ifsc": "", "address": ""},
+        "6": {"name": "HITESH RANJEETBHAI MALI", "enroll": "403840196", "mobile": "9825745113", "bank_acc": "", "ifsc": "", "address": ""},
+        "7": {"name": "DHRUVKUMAR HARESHBHAI RANA", "enroll": "403840216", "mobile": "8758448319", "bank_acc": "", "ifsc": "", "address": ""},
+        "8": {"name": "AZAZ IMRAN SIDAT", "enroll": "403840293", "mobile": "7990748072", "bank_acc": "", "ifsc": "", "address": ""},
+        "9": {"name": "KRISHKUMAR KAMLESHBHAI MACHHI", "enroll": "403840342", "mobile": "8401905875", "bank_acc": "", "ifsc": "", "address": ""},
+        "10": {"name": "KRUNAL RAJNIKANT PADHIYAR", "enroll": "403840403", "mobile": "9227014653", "bank_acc": "", "ifsc": "", "address": ""},
+        "11": {"name": "ZAKIRHUSEN LIYAKAT HUSHEN KAPADIYA", "enroll": "403840640", "mobile": "9429334406", "bank_acc": "", "ifsc": "", "address": ""},
+        "12": {"name": "VIVEK MAHESH RAJPUT", "enroll": "403840642", "mobile": "9106223868", "bank_acc": "", "ifsc": "", "address": ""},
+        "13": {"name": "MOHMMAD SAJJAD MOHAMMAD SARFARAJ SHAIKH", "enroll": "403840774", "mobile": "9106313731", "bank_acc": "", "ifsc": "", "address": ""},
+        "14": {"name": "RIZWANBEG MAKBULBEG MIRZA", "enroll": "403840813", "mobile": "7874463177", "bank_acc": "", "ifsc": "", "address": ""},
+        "15": {"name": "AHMED ABDULSAMAD SEDU", "enroll": "403840817", "mobile": "9157158318", "bank_acc": "", "ifsc": "", "address": ""},
+        "16": {"name": "MOHMED MUZAHID IRFAN SHAIKH", "enroll": "403840847", "mobile": "9409763934", "bank_acc": "", "ifsc": "", "address": ""},
+        "17": {"name": "ALFAZHHUSEN IMRANMIYA MALEK", "enroll": "403840941", "mobile": "7041612254", "bank_acc": "", "ifsc": "", "address": ""},
+        "18": {"name": "HARSH KISHORRAV BORSE", "enroll": "403840956", "mobile": "9737829388", "bank_acc": "", "ifsc": "", "address": ""},
+        "19": {"name": "MAHAMMADFAYAZ LUKMAN ABHLI", "enroll": "403840971", "mobile": "8140555455", "bank_acc": "", "ifsc": "", "address": ""},
+        "20": {"name": "VISHNUBHAI RAMESHBHAI RATHVA", "enroll": "403841017", "mobile": "9824802827", "bank_acc": "", "ifsc": "", "address": ""},
+        "21": {"name": "MUBARAK ALTAFBHAI MAHAMMADBHAI SHEKH", "enroll": "403841024", "mobile": "8460683648", "bank_acc": "", "ifsc": "", "address": ""},
+        "22": {"name": "MO REHAN SALAUDDIN KURESHI", "enroll": "403841025", "mobile": "8401590216", "bank_acc": "", "ifsc": "", "address": ""},
+        "49": {"name": "HIMLESHKUMAR SURESHBHAI VASAVA", "enroll": "403840180", "mobile": "9274925189", "bank_acc": "", "ifsc": "", "address": "VADI FALIYU, PRATHAMIK SHALA DIWA, NAVA DIWA - 393001"},
+        "50": {"name": "AYUSHBHAI SHAMJIBHAI MAKVANA", "enroll": "403840530", "mobile": "9023113573", "bank_acc": "3005010000000", "ifsc": "BARB0BGGBXX", "address": "ALEX FARM HOUSE, UCHHALI, UCHHALI - 393001"}
     };
 
-    function loadTraineeData() {
-        const index = document.getElementById('traineeSelect').value;
-        if (index === "") return;
-        const t = traineesData[index];
+    function loadDataByRollNo() {
+        const roll = document.getElementById('rollInput').value.trim();
+        
+        if (traineesData[roll]) {
+            const t = traineesData[roll];
+            document.getElementById('name').value = t.name || '';
+            document.getElementById('enroll').value = t.enroll || '';
+            document.getElementById('mobile').value = t.mobile || '';
+            document.getElementById('guardian_mobile').value = '';
+            document.getElementById('bank_acc').value = t.bank_acc || '';
+            document.getElementById('ifsc').value = t.ifsc || '';
+            document.getElementById('address').value = t.address || '';
+            document.getElementById('taluka').value = 'અંકલેશ્વર';
+            document.getElementById('district').value = 'ભરૂચ';
 
-        document.getElementById('name').value = t.name || '';
-        document.getElementById('enroll').value = t.enroll || '';
-        document.getElementById('mobile').value = t.mobile || '';
-        document.getElementById('guardian_mobile').value = t.guardian_mobile || '';
-        document.getElementById('bank_acc').value = t.bank_acc || '';
-        document.getElementById('ifsc').value = t.ifsc || '';
-        document.getElementById('address').value = t.address || '';
-        document.getElementById('taluka').value = t.taluka || 'અંકલેશ્વર';
-        document.getElementById('district').value = t.district || 'ભરૂચ';
-
-        // IFSC કોડના આધારે ઓટોમેટિક બેંક પસંદગી
-        if (t.ifsc.startsWith('BARB')) {
-            document.getElementById('bank_name').value = 'BANK OF BARODA';
-        } else if (t.ifsc.startsWith('SBIN')) {
-            document.getElementById('bank_name').value = 'STATE BANK OF INDIA';
-        } else if (t.ifsc.startsWith('HDFC')) {
-            document.getElementById('bank_name').value = 'HDFC BANK';
-        } else if (t.ifsc.startsWith('ICIC')) {
-            document.getElementById('bank_name').value = 'ICICI BANK';
-        } else if (t.ifsc.startsWith('PUNB')) {
-            document.getElementById('bank_name').value = 'PUNJAB NATIONAL BANK';
+            if (t.ifsc.startsWith('BARB')) {
+                document.getElementById('bank_name').value = 'BANK OF BARODA';
+            } else if (t.ifsc.startsWith('SBIN')) {
+                document.getElementById('bank_name').value = 'STATE BANK OF INDIA';
+            } else {
+                document.getElementById('bank_name').value = '';
+            }
+        } else {
+            // જો રોલ નંબર ન મળે તો ફોર્મ ખાલી કરી દો
+            document.getElementById('name').value = '';
+            document.getElementById('enroll').value = '';
+            document.getElementById('mobile').value = '';
+            document.getElementById('bank_acc').value = '';
+            document.getElementById('ifsc').value = '';
+            document.getElementById('address').value = '';
         }
-
         checkMissingFields();
     }
 
@@ -207,6 +221,7 @@
         event.preventDefault();
         
         const formData = {
+            roll_no: document.getElementById('rollInput').value,
             name: document.getElementById('name').value,
             enroll: document.getElementById('enroll').value,
             mobile: document.getElementById('mobile').value,
@@ -221,7 +236,6 @@
             district: document.getElementById('district').value
         };
 
-        // અહીં આપની Google Apps Script URL સેટ કરી દીધી છે
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzKuiUMy3O1yXRexv3T14SUgW1OdAmNbPt9d0MKlHYCCnN1fy3pYr0tD9LcotJAXYFVCw/exec';
         
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) })
@@ -238,4 +252,3 @@
 
 </body>
 </html>
-
