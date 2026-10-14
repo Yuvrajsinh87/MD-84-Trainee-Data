@@ -280,7 +280,7 @@
         "96": {"name": "REHAN ILYAS AHMAD BOBAT", "enroll": "403842005", "mobile": "7041163145", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": ""}
     };
 
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxda1u5VCZdxb_vGTqT8NoKb6wWw0q-URPZlNUDmun7o-pUSW-mp_qceSUqqUmO9TUMKw/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby_noUg4xKu9QF6koQBTwKOJqthhVDoY2p1Su8rbt1iKQBgqb76PG7Kvk91L0A-q3_R/exec';
 
     function loadDataByRollNo() {
         const roll = document.getElementById('rollInput').value.trim();
@@ -291,96 +291,111 @@
             return;
         }
 
-        // પેહલા Google Sheet માંથી લાઇવ સેવ થયેલો ડેટા ફેચ કરવાનો પ્રયત્ન કરો
+        // પહેલા Google Sheet માંથી લાઇવ ડેટા લાવવાનો પ્રયત્ન કરો
         fetch(`${scriptURL}?roll_no=${roll}`)
         .then(response => response.json())
         .then(t => {
             if (t && t.name) {
-                // જો ગૂગલ શીટમાં અગાઉથી સેવ કરેલો ડેટા હશે તો તે બતાવશે
-                document.getElementById('name').value = t.name || '';
-                document.getElementById('enroll').value = t.enroll || '';
-                document.getElementById('mobile').value = t.mobile || '';
-                document.getElementById('guardian_mobile').value = t.guardian_mobile || '';
-                document.getElementById('bank_acc').value = t.bank_acc || '';
-                document.getElementById('ifsc').value = t.ifsc || '';
-                document.getElementById('branch_name').value = t.branch_name || '';
-                document.getElementById('address').value = t.address || '';
-                document.getElementById('taluka').value = t.taluka || 'અંકલેશ્વર';
-                document.getElementById('district').value = t.district || 'ભરૂચ';
-
-                if (t.bank_name) {
-                    document.getElementById('bank_name').value = t.bank_name;
-                }
-
-                let adh = (t.aadhaar || '').replace(/\D/g, '');
-                if (adh.length === 12) {
-                    document.getElementById('aadhaar1').value = adh.substring(0, 4);
-                    document.getElementById('aadhaar2').value = adh.substring(4, 8);
-                    document.getElementById('aadhaar3').value = adh.substring(8, 12);
-                }
-                updatePrintAadhaar();
-            } else if (traineesData[roll]) {
-                // જો ગૂગલ શીટમાં ન હોય તો લોકલ એક્સેલ ડેટામાંથી લેશે
-                const t = traineesData[roll];
-                document.getElementById('name').value = t.name || '';
-                document.getElementById('enroll').value = t.enroll || '';
-                document.getElementById('mobile').value = t.mobile || '';
-                document.getElementById('guardian_mobile').value = '';
-                document.getElementById('bank_acc').value = t.bank_acc || '';
-                document.getElementById('ifsc').value = t.ifsc || '';
-                document.getElementById('branch_name').value = '';
-                document.getElementById('address').value = t.address || '';
-                document.getElementById('taluka').value = 'અંકલેશ્વર';
-                document.getElementById('district').value = 'ભરૂચ';
-
-                let adh = (t.aadhaar || '').replace(/\D/g, '');
-                if (adh.length === 12) {
-                    document.getElementById('aadhaar1').value = adh.substring(0, 4);
-                    document.getElementById('aadhaar2').value = adh.substring(4, 8);
-                    document.getElementById('aadhaar3').value = adh.substring(8, 12);
-                } else {
-                    document.getElementById('aadhaar1').value = '';
-                    document.getElementById('aadhaar2').value = '';
-                    document.getElementById('aadhaar3').value = '';
-                }
-                updatePrintAadhaar();
-
-                const ifsc = t.ifsc.toUpperCase();
-                if (ifsc.startsWith('BARB')) {
-                    document.getElementById('bank_name').value = 'BANK OF BARODA';
-                } else if (ifsc.startsWith('SBIN')) {
-                    document.getElementById('bank_name').value = 'STATE BANK OF INDIA';
-                } else if (ifsc.startsWith('HDFC')) {
-                    document.getElementById('bank_name').value = 'HDFC BANK';
-                } else if (ifsc.startsWith('ICIC')) {
-                    document.getElementById('bank_name').value = 'ICICI BANK';
-                } else if (ifsc.startsWith('PUNB')) {
-                    document.getElementById('bank_name').value = 'PUNJAB NATIONAL BANK';
-                } else if (ifsc.startsWith('UTIB')) {
-                    document.getElementById('bank_name').value = 'AXIS BANK';
-                } else if (ifsc.startsWith('UBIN')) {
-                    document.getElementById('bank_name').value = 'UNION BANK OF INDIA';
-                } else if (ifsc.startsWith('CNRB')) {
-                    document.getElementById('bank_name').value = 'CANARA BANK';
-                } else if (ifsc.startsWith('IDIB')) {
-                    document.getElementById('bank_name').value = 'INDIAN BANK';
-                } else if (ifsc.startsWith('BKID')) {
-                    document.getElementById('bank_name').value = 'BANK OF INDIA';
-                } else if (ifsc !== '') {
-                    document.getElementById('bank_name').value = 'OTHER';
-                    document.getElementById('other_bank_name').value = ifsc;
-                } else {
-                    document.getElementById('bank_name').value = '';
-                }
+                fillFormWithData(t);
             } else {
-                clearForm();
+                loadFromExcel(roll);
             }
-            handleBankSelection();
-            validateForm();
         })
         .catch(error => {
-            console.error('Error fetching from sheet:', error);
+            console.log('Sheet fetch failed, fallback to Excel:', error);
+            loadFromExcel(roll); // જો કનેક્ટ ન થાય તો એક્સેલમાંથી લોડ કરશે જેથી બ્લેન્ક ન રહે
         });
+    }
+
+    function loadFromExcel(roll) {
+        if (traineesData[roll]) {
+            const t = traineesData[roll];
+            document.getElementById('name').value = t.name || '';
+            document.getElementById('enroll').value = t.enroll || '';
+            document.getElementById('mobile').value = t.mobile || '';
+            document.getElementById('guardian_mobile').value = '';
+            document.getElementById('bank_acc').value = t.bank_acc || '';
+            document.getElementById('ifsc').value = t.ifsc || '';
+            document.getElementById('branch_name').value = '';
+            document.getElementById('address').value = t.address || '';
+            document.getElementById('taluka').value = 'અંકલેશ્વર';
+            document.getElementById('district').value = 'ભરૂચ';
+
+            let adh = (t.aadhaar || '').replace(/\D/g, '');
+            if (adh.length === 12) {
+                document.getElementById('aadhaar1').value = adh.substring(0, 4);
+                document.getElementById('aadhaar2').value = adh.substring(4, 8);
+                document.getElementById('aadhaar3').value = adh.substring(8, 12);
+            } else {
+                document.getElementById('aadhaar1').value = '';
+                document.getElementById('aadhaar2').value = '';
+                document.getElementById('aadhaar3').value = '';
+            }
+            updatePrintAadhaar();
+
+            const ifsc = (t.ifsc || '').toUpperCase();
+            if (ifsc.startsWith('BARB')) {
+                document.getElementById('bank_name').value = 'BANK OF BARODA';
+            } else if (ifsc.startsWith('SBIN')) {
+                document.getElementById('bank_name').value = 'STATE BANK OF INDIA';
+            } else if (ifsc.startsWith('HDFC')) {
+                document.getElementById('bank_name').value = 'HDFC BANK';
+            } else if (ifsc.startsWith('ICIC')) {
+                document.getElementById('bank_name').value = 'ICICI BANK';
+            } else if (ifsc.startsWith('PUNB')) {
+                document.getElementById('bank_name').value = 'PUNJAB NATIONAL BANK';
+            } else if (ifsc.startsWith('UTIB')) {
+                document.getElementById('bank_name').value = 'AXIS BANK';
+            } else if (ifsc.startsWith('UBIN')) {
+                document.getElementById('bank_name').value = 'UNION BANK OF INDIA';
+            } else if (ifsc.startsWith('CNRB')) {
+                document.getElementById('bank_name').value = 'CANARA BANK';
+            } else if (ifsc.startsWith('IDIB')) {
+                document.getElementById('bank_name').value = 'INDIAN BANK';
+            } else if (ifsc.startsWith('BKID')) {
+                document.getElementById('bank_name').value = 'BANK OF INDIA';
+            } else if (ifsc !== '') {
+                document.getElementById('bank_name').value = 'OTHER';
+                document.getElementById('other_bank_name').value = ifsc;
+            } else {
+                document.getElementById('bank_name').value = '';
+            }
+        } else {
+            clearForm();
+        }
+        handleBankSelection();
+        validateForm();
+    }
+
+    function fillFormWithData(t) {
+        document.getElementById('name').value = t.name || '';
+        document.getElementById('enroll').value = t.enroll || '';
+        document.getElementById('mobile').value = t.mobile || '';
+        document.getElementById('guardian_mobile').value = t.guardian_mobile || '';
+        document.getElementById('bank_acc').value = t.bank_acc || '';
+        document.getElementById('ifsc').value = t.ifsc || '';
+        document.getElementById('branch_name').value = t.branch_name || '';
+        document.getElementById('address').value = t.address || '';
+        document.getElementById('taluka').value = t.taluka || 'અંકલેશ્વર';
+        document.getElementById('district').value = t.district || 'ભરૂચ';
+
+        if (t.bank_name) {
+            document.getElementById('bank_name').value = t.bank_name;
+        }
+
+        let adh = (t.aadhaar || '').replace(/\D/g, '');
+        if (adh.length === 12) {
+            document.getElementById('aadhaar1').value = adh.substring(0, 4);
+            document.getElementById('aadhaar2').value = adh.substring(4, 8);
+            document.getElementById('aadhaar3').value = adh.substring(8, 12);
+        } else {
+            document.getElementById('aadhaar1').value = '';
+            document.getElementById('aadhaar2').value = '';
+            document.getElementById('aadhaar3').value = '';
+        }
+        updatePrintAadhaar();
+        handleBankSelection();
+        validateForm();
     }
 
     function clearForm() {
