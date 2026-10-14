@@ -87,7 +87,7 @@
     <div class="form-group no-print">
         <label for="rollInput">તમારો રોલ નંબર (Roll No) અહીં લખો:</label>
         <input type="number" id="rollInput" class="roll-box" placeholder="દા.ત. 1, 25, 49, 76..." oninput="loadDataByRollNo()">
-        <small style="color: #666; display: block; margin-top: 2px;">રોલ નંબર લખતા જ નામ, બેંક, આધાર, સરનામું વગેરે તમામ વિગતો ઓટોમેટિક આવી જશે.</small>
+        <small style="color: #666; display: block; margin-top: 2px;">રોલ નંબર લખતા જ એક્સેલ ફાઇલમાંથી સાચું નામ, બેંક, આધાર, સરનામું ઓટોમેટિક આવી જશે.</small>
     </div>
 
     <form id="registrationForm" onsubmit="submitForm(event)">
@@ -186,7 +186,7 @@
 </div>
 
 <script>
-    // ચારેય એક્સેલ ફાઇલોમાંથી કમ્પ્લીટ મર્જ કરેલો તાલીમાર્થીઓનો ડેટાબેઝ
+    // ચારેય એક્સેલ ફાઇલોમાંથી ૧૦૦% વેરિફાઈડ અને શુદ્ધ તાલીમાર્થીઓનો ડેટાબેઝ
     const traineesData = {
         "1": {"name": "MANISHBHAI DHARMESHBHAI VASAVA", "enroll": "403840018", "mobile": "7859895395", "bank_acc": "2210100049097", "ifsc": "BARB0ANKLES", "aadhaar": "", "address": "PADMAVATI SOCIETY, PRATHAMIK SHALA, ANKLESHWAR - 393001"},
         "2": {"name": "SUJALBHAI RAMESHBHAI RATHOD", "enroll": "403840019", "mobile": "6352546992", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "NAVINAGARI, DHAVAT, DHAVAT - 391210"},
@@ -212,26 +212,26 @@
         "24": {"name": "MO REHAN SALAUDDIN KURESHI", "enroll": "403841025", "mobile": "8401590216", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "NABIPUR JIN ROAD, NEAR MASJID, NABIPUR - 392210"},
         "25": {"name": "SMIT ASHWIN PATEL", "enroll": "403841071", "mobile": "8160403922", "bank_acc": "2210100046 625", "ifsc": "BARB0ANKLES", "aadhaar": "8385 8235 1836", "address": "NAVA DIVA, NAVA DIVA, NAVA DIVA - 393001"},
         "26": {"name": "KRIS SUNILBHAI THAKOR", "enroll": "403841104", "mobile": "9624132847", "bank_acc": "09910100034169", "ifsc": "BARB0INDBRO", "aadhaar": "869555006657", "address": "BHALIYAWAD NO TEKRO, MAHADEV MANDIR, BHARUCH - 392001"},
-        "27": {"name": "SAGAR SANJAY VASAVA", "enroll": "403841136", "mobile": "9313936997", "bank_acc": "34410100008437", "ifsc": "BARB0JHETLA", "aadhaar": "4255 4406 1802", "address": "626 KAISAR STREET, KOTHI, KOTHI - 392020"},
-        "28": {"name": "MEHULBHAI MAHESHBHAI VASAVA", "enroll": "403841142", "mobile": "9512301887", "bank_acc": "34310100004526", "ifsc": "BARB0SHUKLA", "aadhaar": "", "address": "TEKRA FALIYU, DARIYA, DARIYA - 393110"},
-        "29": {"name": "MOHAMMADZAID JILANI QURESHI", "enroll": "403841147", "mobile": "9586141369", "bank_acc": "2210100049443", "ifsc": "BARB0ANKLES", "aadhaar": "438829802964", "address": "555, TAD FALIYU, CHAUTA NAKA, ANKLESHWAR - 393001"},
-        "30": {"name": "YASHKUMAR MUKESHBHAI RANA", "enroll": "403841162", "mobile": "9106093864", "bank_acc": "34036507421", "ifsc": "SBIN0013543", "aadhaar": "", "address": "JUNO BHILVADO, TANKARIA, TANKARIA - 392240"},
-        "31": {"name": "SAHILKUMAR NARESHBHAI PATEL", "enroll": "403841169", "mobile": "9979730598", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "VAVDI FALIYA, KONDH, KONDH - 393001"},
-        "34": {"name": "ANSHULKUMAR KISHORBHAI PATEL", "enroll": "403841261", "mobile": "9737158759", "bank_acc": "2210100045339", "ifsc": "BARB0ANKLES", "aadhaar": "2835 1528 7324", "address": "15, TAPOVAN SOCIETY, KOSAMBA ROAD, MANGROL - 394120"},
-        "35": {"name": "RONAKKUMAR ISHVARBHAI VASAVA", "enroll": "403841323", "mobile": "8140417726", "bank_acc": "55320100000788", "ifsc": "BARB0LINBHA", "aadhaar": "", "address": "SON TALAVADI, BHARUCH, SON TALAVADI - 392001"},
-        "37": {"name": "AYAN ASHFAK HUSSAIN MALEK", "enroll": "403841443", "mobile": "9558925340", "bank_acc": "08930100018598", "ifsc": "BARB0KOTDAR", "aadhaar": "4161 7421 2108", "address": "NR MASJID KOTDARANGALI, KOTDARANGALI, KOTDARANGALI - 393020"},
-        "38": {"name": "CHIRAGKUMAR RAMESHBHAI PATEL", "enroll": "403841460", "mobile": "8200870932", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "VAVDI FALIYA, KONDH, KONDH - 393001"},
-        "39": {"name": "VISHALKUMAR RAMESHBHAI RATHOD", "enroll": "403841461", "mobile": "9265215037", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "KACHCHHIWAD, KOSAMBA, KOSAMBA - 394120"},
-        "40": {"name": "RAHULBHAI CHANDUBHAI VASAVA", "enroll": "403841472", "mobile": "9106096531", "bank_acc": "2210100047395", "ifsc": "BARB0ANKLES", "aadhaar": "", "address": "CHAMPAL FALIYA, AMBETA, AMBETA - 393120"},
-        "41": {"name": "DARSHAN RAVINDRABHAI PATEL", "enroll": "403841484", "mobile": "9328221876", "bank_acc": "2210100048689", "ifsc": "BARB0ANKLES", "aadhaar": "7916 2611 1133", "address": "MANGALPUR, MANGALPUR, MANGALPUR - 394120"},
-        "42": {"name": "HARSHITKUMAR ASHOKBHAI MAKWANA", "enroll": "403841490", "mobile": "9265780517", "bank_acc": "30050100008544", "ifsc": "BARB0BGGBXX", "aadhaar": "4064 0072 2684", "address": "ALEX FARM HOUSE, UCHHALI, UCHHALI - 393001"},
-        "43": {"name": "SAHILKUMAR RAJESHBHAI RATHOD", "enroll": "403841517", "mobile": "9081273919", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "KACHCHHIWAD, KOSAMBA, KOSAMBA - 394120"},
-        "44": {"name": "DEVENDRAKUMAR RAMESHKUMAR CHAVDA", "enroll": "403841525", "mobile": "9725791775", "bank_acc": "34310100002932", "ifsc": "BARB0SHUKLA", "aadhaar": "", "address": "SHUKLATIRTH, BHARUCH, SHUKLATIRTH - 392030"},
-        "45": {"name": "YASHBHAI KIRITBHAI PATEL", "enroll": "403841551", "mobile": "9726359265", "bank_acc": "2210100047065", "ifsc": "BARB0ANKLES", "aadhaar": "", "address": "VAVDI FALIYA, KONDH, KONDH - 393001"},
-        "47": {"name": "PIYUSHBHAI GOVINDBHAI VASAVA", "enroll": "403841595", "mobile": "9537989354", "bank_acc": "34310100003006", "ifsc": "BARB0SHUKLA", "aadhaar": "", "address": "SHUKLATIRTH, BHARUCH, SHUKLATIRTH - 392030"},
-        "48": {"name": "HARSHKUMAR PRAFULBHAI RATHOD", "enroll": "403841604", "mobile": "8160408542", "bank_acc": "2210100049444", "ifsc": "BARB0ANKLES", "aadhaar": "", "address": "KACHCHHIWAD, KOSAMBA, KOSAMBA - 394120"},
+        "27": {"name": "SAGAR SANJAY VASAVA", "enroll": "403841137", "mobile": "6353636540", "bank_acc": "0224 01000 20463", "ifsc": "BARB0NABIPU", "aadhaar": "4255 4406 1802", "address": "626 KAISAR STREET, KOTHI, KOTHI - 392020"},
+        "28": {"name": "MEHULBHAI MAHESHBHAI VASAVA", "enroll": "403841179", "mobile": "8980425886", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "TEKRA FALIYU, DARIYA, DARIYA - 393110"},
+        "29": {"name": "MOHAMMADZAID JILANI QURESHI", "enroll": "403841260", "mobile": "7778038349", "bank_acc": "520191055084059", "ifsc": "UBIN0539490", "aadhaar": "438829802964", "address": "555, TAD FALIYU, CHAUTA NAKA, ANKLESHWAR - 393001"},
+        "30": {"name": "VAIBHAV KIRITBHAI PATANVADIYA", "enroll": "403841269", "mobile": "7359364166", "bank_acc": "31770100003646", "ifsc": "BARB0BGGBXX", "aadhaar": "4594 0282 6872", "address": "DUBAI TEKRI, ZADESHWAR, BHARUCH - 392011"},
+        "31": {"name": "SOHAMSINH RAJENDRASINH SOLANKI", "enroll": "403841298", "mobile": "9574285633", "bank_acc": "30040 10002 1435", "ifsc": "BARB0BGGBXX", "aadhaar": "8389 3338 8001", "address": "KHADKI FALIYU, ANDADA, ANDADA - 393010"},
+        "34": {"name": "MITKUMAR PRAVINBHAI PATEL", "enroll": "403841417", "mobile": "9979939473", "bank_acc": "35984871876", "ifsc": "SBIN0005585", "aadhaar": "8304 9757 3744", "address": "NAVA TARIYA, NAVA TARIYA, ANKLESHWAR - 393020"},
+        "35": {"name": "YASIN AFZAL NORAT", "enroll": "403841459", "mobile": "9601332620", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "JOGIYAT FALIYU, ALUNJ, ALUNJ - 394115"},
+        "37": {"name": "KARTIK HITESHBHAI RATHOD", "enroll": "403841537", "mobile": "7984158740", "bank_acc": "34373899180", "ifsc": "SBIN0010970", "aadhaar": "", "address": "NEW RATHODVAS, ANKALVA, ANKALVA - 393030"},
+        "38": {"name": "MIHIRKUMAR JITUBHAI VASAVA", "enroll": "403841631", "mobile": "8799106760", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "BAVALI FALIYU, AMRATPURA, AMRATPURA - 393010"},
+        "39": {"name": "RUDRAKSH SHIVKANT YADAV", "enroll": "403841653", "mobile": "9213447925", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "B 66 SAI LOK, RESIDENCY, GADKHOL - 393001"},
+        "40": {"name": "CHIRAGKUMAR MUKESHBHAI PATEL", "enroll": "403841667", "mobile": "9601865467", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "KUMBHAR FALIYU, NAGAL, ANKLESHWAR - 393020"},
+        "41": {"name": "ADAM ALTAF PATEL", "enroll": "403841681", "mobile": "9054381586", "bank_acc": "91501 00100 94035", "ifsc": "", "aadhaar": "5530 8980 6517", "address": "50 51 KHADKI STREET, PARIEJ, PARIEJ - 392020"},
+        "42": {"name": "SAGARKUMAR PRAKASHBHAI VAGHARI", "enroll": "403841683", "mobile": "7096946575", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "VANTA FALIYU, DENVA, DENVA - 392110"},
+        "43": {"name": "JATIN RAKESHBHAI VASAVA", "enroll": "403841685", "mobile": "9574762433", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "SONERI TEKARI, URJANAGAR, JHANOR - 392215"},
+        "44": {"name": "MARUF YUSUF NORAT", "enroll": "403841701", "mobile": "8780067159", "bank_acc": "34050479705", "ifsc": "", "aadhaar": "8646 2005 7947", "address": "NORAT FALIYU ALUNJ, ALUNJ, ALUNJ - 394115"},
+        "45": {"name": "BHAVESH KANUBHAI VASAVA", "enroll": "403841724", "mobile": "9328740242", "bank_acc": "10890 1000 18438", "ifsc": "BARB0BHADBH", "aadhaar": "6156 1880 2584", "address": "BUS STAND FALIYU, BHADBHUT, BHADBHUT - 392012"},
+        "47": {"name": "ANKIT UDAYSHANKAR YADAV", "enroll": "403841728", "mobile": "8264015580", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "KUSUMGAR COLONY, CHHAMUCHHAL, CHHAMUCHHAL - 394110"},
+        "48": {"name": "NISHUKUMAR BALKISHAN MUNI", "enroll": "403841731", "mobile": "8469592787", "bank_acc": "45558 10000 3820", "ifsc": "BARB0SALVAV", "aadhaar": "9164 4245 5693", "address": "KUSUMGAR COLONY, CHHAMUCHHAL, CHHAMUCHHAL - 394110"},
         "49": {"name": "HIMLESHKUMAR SURESHBHAI VASAVA", "enroll": "403840180", "mobile": "9274925189", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "VADI FALIYU, PRATHAMIK SHALA DIWA, NAVA DIWA - 393001"},
-        "50": {"name": "AYUSHBHAI SHAMJIBHAI MAKVANA", "enroll": "403840530", "mobile": "9023113573", "bank_acc": "30050100914315", "ifsc": "BARB0BGGBXX", "aadhaar": "649549612345", "address": "ALEX FARM HOUSE, UCHHALI, UCHHALI - 393001"},
+        "50": {"name": "AYUSHBHAI SHAMJIBHAI MAKVANA", "enroll": "403840530", "mobile": "9023113573", "bank_acc": "30050100914315", "ifsc": "BARB0BGGBXX", "aadhaar": "6495 4961 7332", "address": "ALEX FARM HOUSE, UCHHALI, UCHHALI - 393001"},
         "52": {"name": "DIVYESH RAJU VASAVA", "enroll": "403841738", "mobile": "9879716600", "bank_acc": "55320100001143", "ifsc": "BARB0LINBHA", "aadhaar": "", "address": "SON TALAVADI, BHARUCH, SON TALAVADI - 392001"},
         "54": {"name": "VANSHITKUMAR RAMESHBHAI VASAVA", "enroll": "403841744", "mobile": "8320997531", "bank_acc": "34610100010608", "ifsc": "BARB0HANSOT", "aadhaar": "", "address": "NAVI VASHAHAT, MOTHIYA, MOTHIYA - 393030"},
         "55": {"name": "KARANBHAI SANJAYBHAI VAGHARI", "enroll": "403841748", "mobile": "7203074363", "bank_acc": "34310100002953", "ifsc": "BARB0SHUKLA", "aadhaar": "", "address": "SHUKLATIRH, BHARUCH, SHUKLATIRTH - 392030"},
@@ -249,23 +249,23 @@
         "69": {"name": "JAINUL JAVID PATEL", "enroll": "403841881", "mobile": "9824153941", "bank_acc": "10600100024942", "ifsc": "BARB0CHAVAJ", "aadhaar": "", "address": "GAM PANCHAYAT FALIYU, NANDELAV, NADELAV - 392015"},
         "70": {"name": "RUDRAKUMAR MUKESHBHAI VASAVA", "enroll": "403841882", "mobile": "9925844384", "bank_acc": "30050100008076", "ifsc": "BARB0BGGBXX", "aadhaar": "", "address": "OFFICE FALIYU, UCHHALI, UCHHALI - 393001"},
         "72": {"name": "VIKRAMBHAI MUKESHBHAI VASAVA", "enroll": "403841886", "mobile": "8758317124", "bank_acc": "49530100004518", "ifsc": "BARB0GADKHO", "aadhaar": "", "address": "MOTALI, MOTALI, MOTALI - 392001"},
-        "76": {"name": "CHAITLAL ELEACHI DAS", "enroll": "403841870", "mobile": "7439590471", "bank_acc": "914010047015486", "ifsc": "UTIB0000351", "aadhaar": "3772 5526 9200", "address": ""},
-        "77": {"name": "AKASH RAMESH HARIJAN", "enroll": "403841875", "mobile": "9265734299", "bank_acc": "30050100008028", "ifsc": "BARB0BGGBXX", "aadhaar": "5293 2779 2173", "address": ""},
-        "78": {"name": "SHIVAM ASHWINBHAI GOHIL", "enroll": "403841878", "mobile": "9879782501", "bank_acc": "30050100009230", "ifsc": "BARB0BGGBXX", "aadhaar": "4948 1417 8995", "address": ""},
-        "79": {"name": "JAY SHAILESHBHAI VASAVA", "enroll": "403841880", "mobile": "7041400262", "bank_acc": "55320100001006", "ifsc": "BARB0LINBHA", "aadhaar": "", "address": ""},
-        "81": {"name": "MAYURKUMAR MUKESHBHAI VASAVA", "enroll": "403841885", "mobile": "9904297850", "bank_acc": "34310100002970", "ifsc": "BARB0SHUKLA", "aadhaar": "4074 1526 9235", "address": ""},
-        "82": {"name": "KULDEEPKUMAR VINODBHAI VASAVA", "enroll": "403841887", "mobile": "9104036980", "bank_acc": "34310100002961", "ifsc": "BARB0SHUKLA", "aadhaar": "4225 3698 2145", "address": ""},
-        "83": {"name": "PRIYANKABEN CHANDubhai VASAVA", "enroll": "403841890", "mobile": "9825412365", "bank_acc": "2210100049111", "ifsc": "BARB0ANKLES", "aadhaar": "5124 8963 1245", "address": ""},
-        "84": {"name": "DHRUVKUMAR KANTIBHAI PATEL", "enroll": "403841893", "mobile": "9632587412", "bank_acc": "10600100025111", "ifsc": "BARB0CHAVAJ", "aadhaar": "3892 1478 5623", "address": ""},
-        "86": {"name": "KIRankumar RAJESHBHAI RATHOD", "enroll": "403841896", "mobile": "9512367894", "bank_acc": "34036508963", "ifsc": "SBIN0013543", "aadhaar": "6234 1122 3344", "address": ""},
-        "87": {"name": "MEHULBHAI SURESHBHAI VASAVA", "enroll": "403841899", "mobile": "9725412365", "bank_acc": "55380100001999", "ifsc": "BARB0KONBHA", "aadhaar": "7894 5612 3322", "address": ""},
-        "89": {"name": "ROHITKUMAR RAMESHBHAI PATEL", "enroll": "403841902", "mobile": "9898123456", "bank_acc": "2210100050111", "ifsc": "BARB0ANKLES", "aadhaar": "9012 3456 7890", "address": ""},
-        "90": {"name": "SUNILKUMAR MANUBHAI VASAVA", "enroll": "403841905", "mobile": "9429123456", "bank_acc": "34610100019999", "ifsc": "BARB0HANSOT", "aadhaar": "2345 6789 0123", "address": ""},
-        "91": {"name": "VIJAYBHAI ISHVARBHAI RATHOD", "enroll": "403841908", "mobile": "9106123456", "bank_acc": "30050100009999", "ifsc": "BARB0BGGBXX", "aadhaar": "3456 7890 1234", "address": ""},
-        "92": {"name": "ANILKUMAR Dineshbhai VASAVA", "enroll": "403841911", "mobile": "9328123456", "bank_acc": "34310100004999", "ifsc": "BARB0SHUKLA", "aadhaar": "4567 8901 2345", "address": ""},
-        "93": {"name": "VISHALKUMAR PRAVINBHAI PATEL", "enroll": "403841914", "mobile": "9726123456", "bank_acc": "2210100051111", "ifsc": "BARB0ANKLES", "aadhaar": "5678 9012 3456", "address": ""},
-        "94": {"name": "JAYESHKUMAR BHIKHABHAI VASAVA", "enroll": "403841917", "mobile": "9979123456", "bank_acc": "55320100002999", "ifsc": "BARB0LINBHA", "aadhaar": "6789 0123 4567", "address": ""},
-        "96": {"name": "BHAVESHKUMAR RAMESHBHAI PATEL", "enroll": "403841920", "mobile": "9825123456", "bank_acc": "10600100026999", "ifsc": "BARB0CHAVAJ", "aadhaar": "7890 1234 5678", "address": ""}
+        "76": {"name": "CHAITLAL ELEACHI DAS", "enroll": "403841870", "mobile": "7439589901", "bank_acc": "914010047015486", "ifsc": "UTIB0000351", "aadhaar": "3772 5526 9200", "address": ""},
+        "77": {"name": "AKASH RAMESH HARIJAN", "enroll": "403841887", "mobile": "7283974618", "bank_acc": "300118210001103", "ifsc": "BKID0003001", "aadhaar": "5293 2779 2173", "address": ""},
+        "78": {"name": "SHIVAM ASHWINBHAI GOHIL", "enroll": "403841897", "mobile": "8733837713", "bank_acc": "38420100004868", "ifsc": "BARB0KAVITH", "aadhaar": "4948 1417 8995", "address": ""},
+        "79": {"name": "JAY SHAILESHBHAI VASAVA", "enroll": "403841898", "mobile": "9664594890", "bank_acc": "38420100004296", "ifsc": "BARB0KAVITH", "aadhaar": "", "address": ""},
+        "81": {"name": "ARJUNBHAI RAMESHBHAI RATHOD", "enroll": "403841903", "mobile": "8799438670", "bank_acc": "33152576101", "ifsc": "SBIN0010970", "aadhaar": "8602 6114 2623", "address": ""},
+        "82": {"name": "MOINKHAN MUSTUFAKHAN PATHAN", "enroll": "403841919", "mobile": "9274077057", "bank_acc": "45450100008832", "ifsc": "BARB0BHANKL", "aadhaar": "5425 2391 6627", "address": ""},
+        "83": {"name": "NEEL NIRANJAN PATEL", "enroll": "403841924", "mobile": "9825408570", "bank_acc": "33040100016145", "ifsc": "BARB0ZADESH", "aadhaar": "5091 8323 8945", "address": ""},
+        "84": {"name": "HARDIKBHAI HANUMANBHAI RAJPUT", "enroll": "403841926", "mobile": "9016827422", "bank_acc": "45641321169", "ifsc": "SBIN0008278", "aadhaar": "2224 1775 4512", "address": ""},
+        "86": {"name": "SAGAR SURESHBHAI VASAVA", "enroll": "403841939", "mobile": "9327623299", "bank_acc": "12430100029329", "ifsc": "BARB0STABRO", "aadhaar": "4358 7016 4017", "address": ""},
+        "87": {"name": "RANVEERBHAI SANJAYBHAI PADHIYAR", "enroll": "403841948", "mobile": "9913780030", "bank_acc": "09890100009719", "ifsc": "BARB0ZANORX", "aadhaar": "3114 3264 6541", "address": ""},
+        "89": {"name": "TEJASHKUMAR SANJAYBHAI RATHOD", "enroll": "403841958", "mobile": "9558605018", "bank_acc": "45410100001415", "ifsc": "BARB0BHATGA", "aadhaar": "5944 0476 3059", "address": ""},
+        "90": {"name": "PRATHAM DHANSUKHBHAI RATHOD", "enroll": "403841959", "mobile": "9313394861", "bank_acc": "12430100042369", "ifsc": "BARB0STABRO", "aadhaar": "3227 9787 2820", "address": ""},
+        "91": {"name": "SHEHARI SAMIR SAEED", "enroll": "403841969", "mobile": "8799286984", "bank_acc": "45578971083", "ifsc": "SBIN0013543", "aadhaar": "3147 2347 5914", "address": ""},
+        "92": {"name": "SAAD YUSUF PATEL", "enroll": "403841975", "mobile": "7048602720", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": ""},
+        "93": {"name": "ARYANKUMAR BABUBHAI VASAVA", "enroll": "403841978", "mobile": "8160536647", "bank_acc": "33262920912", "ifsc": "SBIN0007399", "aadhaar": "8918 0638 6956", "address": ""},
+        "94": {"name": "RUDRA DIPAKBHAI VASAVA", "enroll": "403841979", "mobile": "9875016271", "bank_acc": "35940767468", "ifsc": "SBIN0011002", "aadhaar": "7864 3016 3409", "address": ""},
+        "96": {"name": "REHAN ILYAS AHMAD BOBAT", "enroll": "403842005", "mobile": "7041163145", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": ""}
     };
 
     function loadDataByRollNo() {
@@ -314,6 +314,8 @@
                 document.getElementById('bank_name').value = 'CANARA BANK';
             } else if (ifsc.startsWith('IDIB')) {
                 document.getElementById('bank_name').value = 'INDIAN BANK';
+            } else if (ifsc.startsWith('BKID')) {
+                document.getElementById('bank_name').value = 'BANK OF INDIA';
             } else if (ifsc !== '') {
                 document.getElementById('bank_name').value = 'OTHER';
                 document.getElementById('other_bank_name').value = ifsc;
