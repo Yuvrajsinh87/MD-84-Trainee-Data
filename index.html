@@ -24,9 +24,18 @@
         .print-aadhaar-text { display: none; }
 
         .hidden { display: none !important; }
-        .btn-container { text-align: center; margin-top: 15px; }
-        button { background-color: #1a73e8; color: white; border: none; padding: 10px 20px; font-size: 14px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
-        button:hover { background-color: #1557b0; }
+        
+        /* બટન કન્ટેનર અને સ્ટાઇલ */
+        .btn-container { text-align: center; margin-top: 15px; display: flex; gap: 10px; justify-content: center; }
+        button { padding: 10px 20px; font-size: 14px; border-radius: 4px; cursor: pointer; font-weight: bold; border: none; transition: background 0.3s; }
+        .btn-save { background-color: #28a745; color: white; }
+        .btn-save:hover { background-color: #218838; }
+        .btn-save:disabled { background-color: #cccccc; cursor: not-allowed; }
+        
+        .btn-print { background-color: #1a73e8; color: white; }
+        .btn-print:hover { background-color: #1557b0; }
+
+        #successMessage { text-align: center; color: #28a745; font-weight: bold; margin-top: 10px; font-size: 14px; }
 
         /* A4 Single Page Print Optimization */
         @media print {
@@ -90,30 +99,30 @@
         <small style="color: #666; display: block; margin-top: 2px;">રોલ નંબર લખતા જ એક્સેલ ફાઇલમાંથી સાચું નામ, બેંક, આધાર, સરનામું ઓટોમેટિક આવી જશે.</small>
     </div>
 
-    <form id="registrationForm" onsubmit="submitForm(event)">
+    <form id="registrationForm">
         <div class="form-group">
             <label>તાલીમાર્થીનું પૂરું નામ (Trainee Full Name):</label>
-            <input type="text" id="name" required>
+            <input type="text" id="name" required oninput="validateForm()">
         </div>
 
         <div class="form-group">
             <label>એનરોલમેન્ટ નંબર (Enrollment No):</label>
-            <input type="text" id="enroll">
+            <input type="text" id="enroll" oninput="validateForm()">
         </div>
 
         <div class="form-group">
             <label>તાલીમાર્થીનો મોબાઈલ નંબર:</label>
-            <input type="tel" id="mobile" maxlength="10">
+            <input type="tel" id="mobile" maxlength="10" oninput="validateForm()">
         </div>
 
         <div class="form-group">
             <label>વાલીનો મોબાઈલ નંબર:</label>
-            <input type="tel" id="guardian_mobile" maxlength="10" class="missing-field" placeholder="માહિતી ખૂટે છે - કૃપા કરીને ભરો">
+            <input type="tel" id="guardian_mobile" maxlength="10" class="missing-field" placeholder="માહિતી ખૂટે છે - કૃપા કરીને ભરો" oninput="validateForm()">
         </div>
 
         <div class="form-group">
             <label>બેંકનું નામ (Bank Name):</label>
-            <select id="bank_name" class="missing-field" onchange="handleBankSelection()">
+            <select id="bank_name" class="missing-field" onchange="handleBankSelection(); validateForm();">
                 <option value="">-- બેંક પસંદ કરો --</option>
                 <option value="BANK OF BARODA">BANK OF BARODA (બેંક ઓફ બરોડા)</option>
                 <option value="STATE BANK OF INDIA">STATE BANK OF INDIA (સ્ટેટ બેંક ઓફ ઇન્ડિયા)</option>
@@ -134,31 +143,31 @@
         <!-- અન્ય બેંક સિલેક્ટ કરવા પર દેખાતું ડાયનેમિક બોક્સ -->
         <div class="form-group hidden" id="otherBankGroup">
             <label>અન્ય બેંકનું નામ લખો (Other Bank Name):</label>
-            <input type="text" id="other_bank_name" placeholder="બેંકનું નામ અહીં લખો">
+            <input type="text" id="other_bank_name" placeholder="બેંકનું નામ અહીં લખો" oninput="validateForm()">
         </div>
 
         <div class="form-group">
             <label>બેંક બ્રાન્ચનું નામ (Branch Name):</label>
-            <input type="text" id="branch_name" class="missing-field" placeholder="બ્રાન્ચનું નામ લખો">
+            <input type="text" id="branch_name" class="missing-field" placeholder="બ્રાન્ચનું નામ લખો" oninput="validateForm()">
         </div>
 
         <div class="form-group">
             <label>બેંક એકાઉન્ટ નંબર (આગળના ઝીરો સચવાશે):</label>
-            <input type="text" id="bank_acc">
+            <input type="text" id="bank_acc" oninput="validateForm()">
         </div>
 
         <div class="form-group">
             <label>બેંક આઈએફએસસી કોડ (IFSC Code):</label>
-            <input type="text" id="ifsc">
+            <input type="text" id="ifsc" oninput="validateForm()">
         </div>
 
         <div class="form-group">
             <label>આધાર કાર્ડ નંબર:</label>
             <!-- ફોર્મ ભરતી વખતે ૪-૪-૪ ના ૩ ખાના -->
             <div class="aadhaar-group">
-                <input type="text" id="aadhaar1" maxlength="4" oninput="moveFocus(this, 'aadhaar2')">
-                <input type="text" id="aadhaar2" maxlength="4" oninput="moveFocus(this, 'aadhaar3')">
-                <input type="text" id="aadhaar3" maxlength="4">
+                <input type="text" id="aadhaar1" maxlength="4" oninput="moveFocus(this, 'aadhaar2'); validateForm();">
+                <input type="text" id="aadhaar2" maxlength="4" oninput="moveFocus(this, 'aadhaar3'); validateForm();">
+                <input type="text" id="aadhaar3" maxlength="4" oninput="validateForm();">
             </div>
             <!-- પ્રિન્ટ / પીડીએફ વખતે સળંગ લખાણ દેખાશે -->
             <div class="print-aadhaar-text" id="printAadhaarDisplay">------------------</div>
@@ -166,27 +175,29 @@
 
         <div class="form-group">
             <label>પૂરું સરનામું (Address):</label>
-            <textarea id="address" rows="2"></textarea>
+            <textarea id="address" rows="2" oninput="validateForm()"></textarea>
         </div>
 
         <div class="form-group">
             <label>તાલુકો:</label>
-            <input type="text" id="taluka" class="missing-field" value="અંકલેશ્વર">
+            <input type="text" id="taluka" class="missing-field" value="અંકલેશ્વર" oninput="validateForm()">
         </div>
 
         <div class="form-group">
             <label>જિલ્લો:</label>
-            <input type="text" id="district" class="missing-field" value="ભરૂચ">
+            <input type="text" id="district" class="missing-field" value="ભરૂચ" oninput="validateForm()">
         </div>
 
+        <!-- અલગ-અલગ સેવ અને પ્રિન્ટ બટન્સ -->
         <div class="btn-container no-print">
-            <button type="submit">ડેટા સેવ કરો અને PDF પ્રિન્ટ/ડાઉનલોડ કરો</button>
+            <button type="button" id="saveBtn" class="btn-save" onclick="saveData()" disabled>ડેટા સેવ કરો</button>
+            <button type="button" id="printBtn" class="btn-print" onclick="window.print()" disabled>PDF પ્રિન્ટ / ડાઉનલોડ કરો</button>
         </div>
+        <div id="successMessage"></div>
     </form>
 </div>
 
 <script>
-    // ચારેય એક્સેલ ફાઇલોમાંથી ૧૦૦% વેરિફાઈડ અને શુદ્ધ તાલીમાર્થીઓનો ડેટાબેઝ
     const traineesData = {
         "1": {"name": "MANISHBHAI DHARMESHBHAI VASAVA", "enroll": "403840018", "mobile": "7859895395", "bank_acc": "2210100049097", "ifsc": "BARB0ANKLES", "aadhaar": "", "address": "PADMAVATI SOCIETY, PRATHAMIK SHALA, ANKLESHWAR - 393001"},
         "2": {"name": "SUJALBHAI RAMESHBHAI RATHOD", "enroll": "403840019", "mobile": "6352546992", "bank_acc": "", "ifsc": "", "aadhaar": "", "address": "NAVINAGARI, DHAVAT, DHAVAT - 391210"},
@@ -270,6 +281,7 @@
 
     function loadDataByRollNo() {
         const roll = document.getElementById('rollInput').value.trim();
+        document.getElementById('successMessage').innerText = "";
         
         if (traineesData[roll]) {
             const t = traineesData[roll];
@@ -335,7 +347,7 @@
             updatePrintAadhaar();
         }
         handleBankSelection();
-        checkMissingFields();
+        validateForm();
     }
 
     function updatePrintAadhaar() {
@@ -360,15 +372,18 @@
             otherGroup.classList.add('hidden');
             document.getElementById('other_bank_name').value = '';
         }
-        checkMissingFields();
+        validateForm();
     }
 
-    function checkMissingFields() {
-        const fields = ['guardian_mobile', 'bank_name', 'branch_name', 'taluka', 'district'];
+    function validateForm() {
+        const fields = ['guardian_mobile', 'bank_name', 'branch_name', 'taluka', 'district', 'name', 'enroll', 'mobile', 'bank_acc', 'ifsc'];
+        let isValid = true;
+
         fields.forEach(id => {
             let el = document.getElementById(id);
             if (el && el.value.trim() === "") {
                 el.classList.add('missing-field');
+                isValid = false;
             } else if (el) {
                 el.classList.remove('missing-field');
             }
@@ -379,10 +394,25 @@
         if (bankSelect && bankSelect.value === 'OTHER') {
             if (otherInput && otherInput.value.trim() === "") {
                 otherInput.classList.add('missing-field');
+                isValid = false;
             } else if (otherInput) {
                 otherInput.classList.remove('missing-field');
             }
         }
+
+        // આધાર કાર્ડના ત્રણેય ખાના ભરાયેલા હોવા જરૂરી છે
+        const a1 = document.getElementById('aadhaar1').value.trim();
+        const a2 = document.getElementById('aadhaar2').value.trim();
+        const a3 = document.getElementById('aadhaar3').value.trim();
+        if (a1.length < 4 || a2.length < 4 || a3.length < 4) {
+            isValid = false;
+        }
+
+        // જ્યાં સુધી બધી વિગતો પૂરી ન થાય ત્યાં સુધી સેવ અને પ્રિન્ટ બટન બંધ રહેશે
+        document.getElementById('saveBtn').disabled = !isValid;
+        document.getElementById('printBtn').disabled = !isValid;
+        
+        return isValid;
     }
 
     function moveFocus(current, nextFieldId) {
@@ -397,13 +427,16 @@
             if(e.target.id !== 'mobile' && e.target.id !== 'guardian_mobile' && e.target.id !== 'bank_acc' && !e.target.id.includes('aadhaar')) {
                 this.value = this.value.toUpperCase();
             }
-            checkMissingFields();
+            validateForm();
         });
     });
 
-    function submitForm(event) {
-        event.preventDefault();
-        
+    function saveData() {
+        if (!validateForm()) {
+            alert('કૃપા કરીને બધી જ ફરજિયાત વિગતો ભરો!');
+            return;
+        }
+
         let finalBankName = document.getElementById('bank_name').value;
         if (finalBankName === 'OTHER') {
             finalBankName = document.getElementById('other_bank_name').value.toUpperCase();
@@ -412,7 +445,7 @@
         const a1 = document.getElementById('aadhaar1').value;
         const a2 = document.getElementById('aadhaar2').value;
         const a3 = document.getElementById('aadhaar3').value;
-        const fullAadhaar = (a1 && a2 && a3) ? `${a1} ${a2} ${a3}` : '';
+        const fullAadhaar = `${a1} ${a2} ${a3}`;
 
         const formData = {
             roll_no: document.getElementById('rollInput').value,
@@ -432,14 +465,17 @@
 
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzKuiUMy3O1yXRexv3T14SUgW1OdAmNbPt9d0MKlHYCCnN1fy3pYr0tD9LcotJAXYFVCw/exec';
         
+        document.getElementById('saveBtn').innerText = 'સેવ થઈ રહ્યું છે...';
+        
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) })
         .then(() => {
-            alert('ડેટા સફળતાપૂર્વક Google Sheet માં સેવ થઈ ગયો છે!');
-            window.print();
+            document.getElementById('saveBtn').innerText = 'ડેટા સેવ થઈ ગયો ✓';
+            document.getElementById('successMessage').innerText = 'ડેટા સફળતાપૂર્વક Google Sheet માં સેવ થઈ ગયો છે! હવે તમે PDF પ્રિન્ટ / ડાઉનલોડ બટન દબાવી શકો છો.';
         })
         .catch(error => {
             console.error('Error!', error.message);
-            window.print();
+            document.getElementById('saveBtn').innerText = 'ડેટા સેવ કરો';
+            alert('સેવ કરતી વખતે ભૂલ થઈ છે. કૃપા કરીને ફરી પ્રયત્ન કરો.');
         });
     }
 </script>
