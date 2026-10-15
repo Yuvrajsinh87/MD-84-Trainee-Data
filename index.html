@@ -282,7 +282,7 @@
 
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxKRz-lw9594NPyfkXef5uId99-tDG5RHBzX4nEKv_re1akxyFrl7Rpi_S1s5xT6x4M/exec';
 
-    // ગ્લોબલ વેરીએબલ જેથી જૂની રિક્વેસ્ટ રદ થઈ શકે
+    // ગ્લોબલ વેરીએબલ જેથી જૂની રિક્વેસ્ટ સદંતર કેન્સલ થાય
     let activeCallbackName = null;
 
     function loadDataByRollNo() {
@@ -294,21 +294,22 @@
             return;
         }
 
-        // ૧. તાત્કાલિક લોકલ એક્સેલમાંથી ડેટા ભરી દો (કોઈ જ રાહ જોયા વગર)
+        // ૧. સૌથી પહેલાં લોકલ એક્સેલમાંથી તે જ રોલ નંબરનો સાચો ડેટા તાત્કાલિક ભરી દો
         loadFromExcel(roll);
 
-        // ૨. જો અગાઉ કોઈ કોલબેક ચાલુ હોય તો તેને નિષ્ક્રિય કરી દો
+        // ૨. અગાઉની ચાલતી કોઈ રિક્વેસ્ટ હોય તો તેને કેન્સલ કરો
         if (activeCallbackName && window[activeCallbackName]) {
             delete window[activeCallbackName];
         }
 
-        // ૩. તદ્દન યુનિક કોલબેક નેમ બનાવો
+        // ૩. હાલના રોલ નંબર માટે તદ્દન યુનિક કોલબેક નેમ બનાવો
         const currentCallback = 'cb_roll_' + roll + '_' + Date.now();
         activeCallbackName = currentCallback;
 
         window[currentCallback] = function(t) {
-            // જો યુઝરે વચ્ચે રોલ નંબર બદલી નાખ્યો હોય, તો જૂનો ડેટા ઇગ્નોર કરો
             const liveRollInput = document.getElementById('rollInput').value.trim();
+            
+            // જો યુઝરે ઇનપુટ બોક્સમાંથી રોલ નંબર બદલી નાખ્યો હોય, તો જૂનો ડેટા રદ કરો
             if (activeCallbackName !== currentCallback || liveRollInput !== roll) {
                 return;
             }
@@ -317,8 +318,8 @@
             const scriptEl = document.getElementById('dynamic_jsonp');
             if (scriptEl) scriptEl.remove();
 
-            // જો ગૂગલ શીટમાં આ તાલીમાર્થીનો ડેટા સેવ થયેલો હોય તો જ ઓવરરાઈટ કરો (જેથી સુધારેલી માહિતી જ દેખાય)
-            if (t && t.name && t.roll_no == roll) {
+            // ચકાસણી: Google Sheet માંથી આવેલો ડેટા અને હાલમાં લખેલો રોલ નંબર exact 100% મેચ થવો જ જોઈએ
+            if (t && t.name && String(t.roll_no).trim() === String(roll).trim()) {
                 fillFormWithData(t);
             }
         };
@@ -327,7 +328,7 @@
         const oldScript = document.getElementById('dynamic_jsonp');
         if (oldScript) oldScript.remove();
 
-        // નવી સ્ક્રિપ્ટ ઉમેરો
+        // નવી સ્ક્રિપ્ટ ઉમેરો (સાચા રોલ નંબર સાથે)
         const scriptTag = document.createElement('script');
         scriptTag.id = 'dynamic_jsonp';
         scriptTag.src = `${scriptURL}?roll_no=${encodeURIComponent(roll)}&callback=${currentCallback}`;
@@ -563,7 +564,7 @@
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) })
         .then(() => {
             document.getElementById('saveBtn').innerText = 'ડેટા સેવ થઈ ગયો ✓';
-            document.getElementById('successMessage').innerText = 'ડેટาสફળતાપૂર્વક Google Sheet માં સેવ થઈ ગયો છે! હવે તમે PDF પ્રિન્ટ / ડાઉનલોડ બટન દબાવી શકો છો.';
+            document.getElementById('successMessage').innerText = 'ડેટા સફળતાપૂર્વક Google Sheet માં સેવ થઈ ગયો છે! હવે તમે PDF પ્રિન્ટ / ડાઉનલોડ બટન દબાવી શકો છો.';
         })
         .catch(error => {
             console.error('Error!', error.message);
