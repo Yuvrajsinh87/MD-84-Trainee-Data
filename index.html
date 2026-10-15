@@ -282,6 +282,9 @@
 
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxKRz-lw9594NPyfkXef5uId99-tDG5RHBzX4nEKv_re1akxyFrl7Rpi_S1s5xT6x4M/exec';
 
+    // ગ્લોબલ વેરીએબલ જેથી જૂની રિક્વેસ્ટ રદ થઈ શકે
+    let activeCallbackName = null;
+
     function loadDataByRollNo() {
         const roll = document.getElementById('rollInput').value.trim();
         document.getElementById('successMessage').innerText = "";
@@ -291,29 +294,49 @@
             return;
         }
 
-        // ૧. સૌથી પહેલાં લોકલ એક્સેલ ડેટામાંથી તરત જ ભરી દો જેથી ફોર્મ ક્યારેય બ્લેન્ક ન રહે
+        // ૧. તાત્કાલિક લોકલ એક્સેલમાંથી ડેટા ભરી દો (કોઈ જ રાહ જોયા વગર)
         loadFromExcel(roll);
 
-        // ૨. સાથે-સાથે ગૂગલ શીટમાંથી JSONP પદ્ધતિથી સેવ થયેલો લાઇવ ડેટા ચેક કરો (CORS Bypass)
-        const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-        window[callbackName] = function(t) {
-            delete window[callbackName];
-            if (scriptTag.parentNode) {
-                scriptTag.parentNode.removeChild(scriptTag);
+        // ૨. જો અગાઉ કોઈ કોલબેક ચાલુ હોય તો તેને નિષ્ક્રિય કરી દો
+        if (activeCallbackName && window[activeCallbackName]) {
+            delete window[activeCallbackName];
+        }
+
+        // ૩. તદ્દન યુનિક કોલબેક નેમ બનાવો
+        const currentCallback = 'cb_roll_' + roll + '_' + Date.now();
+        activeCallbackName = currentCallback;
+
+        window[currentCallback] = function(t) {
+            // જો યુઝરે વચ્ચે રોલ નંબર બદલી નાખ્યો હોય, તો જૂનો ડેટા ઇગ્નોર કરો
+            const liveRollInput = document.getElementById('rollInput').value.trim();
+            if (activeCallbackName !== currentCallback || liveRollInput !== roll) {
+                return;
             }
-            if (t && t.name) {
-                fillFormWithData(t); // જો ગૂગલ શીટમાં અગાઉથી સેવ કરેલો ડેટા હશે તો તે ઓવરરાઈટ કરીને બતાવશે
+
+            delete window[currentCallback];
+            const scriptEl = document.getElementById('dynamic_jsonp');
+            if (scriptEl) scriptEl.remove();
+
+            // જો ગૂગલ શીટમાં આ તાલીમાર્થીનો ડેટા સેવ થયેલો હોય તો જ ઓવરરાઈટ કરો (જેથી સુધારેલી માહિતી જ દેખાય)
+            if (t && t.name && t.roll_no == roll) {
+                fillFormWithData(t);
             }
         };
 
+        // જૂની સ્ક્રિપ્ટ હટાવો
+        const oldScript = document.getElementById('dynamic_jsonp');
+        if (oldScript) oldScript.remove();
+
+        // નવી સ્ક્રિપ્ટ ઉમેરો
         const scriptTag = document.createElement('script');
-        scriptTag.src = `${scriptURL}?roll_no=${roll}&callback=${callbackName}`;
+        scriptTag.id = 'dynamic_jsonp';
+        scriptTag.src = `${scriptURL}?roll_no=${encodeURIComponent(roll)}&callback=${currentCallback}`;
+        
         scriptTag.onerror = function() {
-            delete window[callbackName];
-            if (scriptTag.parentNode) {
-                scriptTag.parentNode.removeChild(scriptTag);
-            }
+            delete window[currentCallback];
+            if (scriptTag.parentNode) scriptTag.parentNode.removeChild(scriptTag);
         };
+
         document.body.appendChild(scriptTag);
     }
 
@@ -540,7 +563,7 @@
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) })
         .then(() => {
             document.getElementById('saveBtn').innerText = 'ડેટા સેવ થઈ ગયો ✓';
-            document.getElementById('successMessage').innerText = 'ડેટા સફળતાપૂર્વક Google Sheet માં સેવ થઈ ગયો છે! હવે તમે PDF પ્રિન્ટ / ડાઉનલોડ બટન દબાવી શકો છો.';
+            document.getElementById('successMessage').innerText = 'ડેટาสફળતાપૂર્વક Google Sheet માં સેવ થઈ ગયો છે! હવે તમે PDF પ્રિન્ટ / ડાઉનલોડ બટન દબાવી શકો છો.';
         })
         .catch(error => {
             console.error('Error!', error.message);
